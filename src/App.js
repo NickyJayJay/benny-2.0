@@ -120,9 +120,8 @@ const App = () => {
 						<tr>
 							<th>Status</th>
 							<th>ABC</th>
-							<th>Prioritized Task List</th>
 							<th>
-								<button type='submit'>Save</button>
+								Prioritized Task List <button type='submit'>Save</button>
 								<button type='button' onClick={handleCancelClick}>
 									Cancel
 								</button>

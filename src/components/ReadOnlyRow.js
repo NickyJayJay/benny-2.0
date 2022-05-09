@@ -6,15 +6,7 @@ const ReadOnlyRow = ({ task, handleEditClick, handleDeleteClick }) => {
 			<td onClick={(event) => handleEditClick(event, task)}>{task.status}</td>
 			<td onClick={(event) => handleEditClick(event, task)}>{task.priority}</td>
 			<td onClick={(event) => handleEditClick(event, task)}>
-				{task.taskDescription}
-			</td>
-			<td>
-				<button type='button' onClick={(event) => handleEditClick(event, task)}>
-					Edit
-				</button>
-				<button type='button' onClick={() => handleDeleteClick(task.id)}>
-					Delete
-				</button>
+				{task.taskDescription || 'Enter a task description'}
 			</td>
 		</tr>
 	);
