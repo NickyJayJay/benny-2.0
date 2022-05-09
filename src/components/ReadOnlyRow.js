@@ -3,9 +3,11 @@ import React from 'react';
 const ReadOnlyRow = ({ task, handleEditClick, handleDeleteClick }) => {
 	return (
 		<tr>
-			<td>{task.status}</td>
-			<td>{task.priority}</td>
-			<td>{task.taskDescription}</td>
+			<td onClick={(event) => handleEditClick(event, task)}>{task.status}</td>
+			<td onClick={(event) => handleEditClick(event, task)}>{task.priority}</td>
+			<td onClick={(event) => handleEditClick(event, task)}>
+				{task.taskDescription}
+			</td>
 			<td>
 				<button type='button' onClick={(event) => handleEditClick(event, task)}>
 					Edit

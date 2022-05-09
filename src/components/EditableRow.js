@@ -4,6 +4,8 @@ const EditableRow = ({
 	editFormData,
 	handleEditFormChange,
 	handleCancelClick,
+	handleEditFormSubmit,
+	task,
 }) => {
 	return (
 		<tr>
@@ -12,13 +14,15 @@ const EditableRow = ({
 					required='required'
 					name='status'
 					value={editFormData.status}
-					onChange={handleEditFormChange}
+					onChange={(event) => handleEditFormChange(event, task.id)}
+					onBlur={handleEditFormSubmit}
 				>
-					<option value='inProcess'>In Process</option>
-					<option value='completed'>Completed</option>
-					<option value='forwarded'>Forwarded</option>
-					<option value='delegated'>Delegated</option>
-					<option value='removed'>Removed</option>
+					<option>Status</option>
+					<option value='In Process'>In Process</option>
+					<option value='Completed'>Completed</option>
+					<option value='Forwarded'>Forwarded</option>
+					<option value='Delegated'>Delegated</option>
+					<option value='Remove'>Remove</option>
 				</select>
 			</td>
 			<td>
@@ -29,6 +33,7 @@ const EditableRow = ({
 					name='priority'
 					value={editFormData.priority}
 					onChange={handleEditFormChange}
+					onBlur={handleEditFormSubmit}
 				></input>
 			</td>
 			<td>
@@ -39,6 +44,7 @@ const EditableRow = ({
 					name='taskDescription'
 					value={editFormData.taskDescription}
 					onChange={handleEditFormChange}
+					onBlur={handleEditFormSubmit}
 				></input>
 			</td>
 			<td>

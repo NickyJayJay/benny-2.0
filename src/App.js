@@ -33,16 +33,20 @@ const App = () => {
 		setAddFormData(newFormData);
 	};
 
-	const handleEditFormChange = (event) => {
+	const handleEditFormChange = (event, taskId) => {
 		event.preventDefault();
 
 		const fieldName = event.target.getAttribute('name');
 		const fieldValue = event.target.value;
 
+		fieldValue === 'Remove' && handleDeleteClick(taskId);
+
 		const newFormData = { ...editFormData };
 		newFormData[fieldName] = fieldValue;
 
 		setEditFormData(newFormData);
+
+		console.log(taskId);
 	};
 
 	const handleAddFormSubmit = (event) => {
@@ -77,7 +81,8 @@ const App = () => {
 		newTasks[index] = editedTask;
 
 		setTasks(newTasks);
-		setEditTaskId(null);
+
+		event.type === 'submit' && setEditTaskId(null);
 	};
 
 	const handleEditClick = (event, task) => {
@@ -114,19 +119,27 @@ const App = () => {
 					<thead>
 						<tr>
 							<th>Status</th>
-							<th>Priority</th>
-							<th>Task Description</th>
-							<th>Actions</th>
+							<th>ABC</th>
+							<th>Prioritized Task List</th>
+							<th>
+								<button type='submit'>Save</button>
+								<button type='button' onClick={handleCancelClick}>
+									Cancel
+								</button>
+							</th>
 						</tr>
 					</thead>
 					<tbody>
 						{tasks.map((task) => (
-							<Fragment>
+							<Fragment key={task.id}>
 								{editTaskId === task.id ? (
 									<EditableRow
 										editFormData={editFormData}
 										handleEditFormChange={handleEditFormChange}
 										handleCancelClick={handleCancelClick}
+										handleEditFormSubmit={handleEditFormSubmit}
+										handleDeleteClick={handleDeleteClick}
+										task={task}
 									/>
 								) : (
 									<ReadOnlyRow
