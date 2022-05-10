@@ -12,13 +12,13 @@ const App = () => {
 	const [addFormData, setAddFormData] = useState({
 		status: '',
 		priority: '',
-		taskDescription: '',
+		description: '',
 	});
 
 	const [editFormData, setEditFormData] = useState({
 		status: '',
 		priority: '',
-		taskDescription: '',
+		description: '',
 	});
 
 	const [editTaskId, setEditTaskId] = useState(null);
@@ -57,7 +57,7 @@ const App = () => {
 			key: nanoid(),
 			status: addFormData.status,
 			priority: addFormData.priority,
-			taskDescription: addFormData.taskDescription,
+			description: addFormData.description,
 		};
 
 		const newTasks = [...tasks, newTask];
@@ -71,7 +71,7 @@ const App = () => {
 			id: editTaskId,
 			status: editFormData.status,
 			priority: editFormData.priority,
-			taskDescription: editFormData.taskDescription,
+			description: editFormData.description,
 		};
 
 		const newTasks = [...tasks];
@@ -82,7 +82,7 @@ const App = () => {
 
 		setTasks(newTasks);
 
-		event.type === 'submit' && setEditTaskId(null);
+		setEditTaskId(null);
 	};
 
 	const handleEditClick = (event, task) => {
@@ -92,7 +92,7 @@ const App = () => {
 		const formValues = {
 			status: task.status,
 			priority: task.priority,
-			taskDescription: task.taskDescription,
+			description: task.description,
 		};
 
 		setEditFormData(formValues);
@@ -173,7 +173,7 @@ const App = () => {
 				/>
 				<input
 					type='text'
-					name='taskDescription'
+					name='description'
 					required='required'
 					placeholder='Enter a task description...'
 					onChange={handleAddFormChange}

@@ -37,8 +37,8 @@ const EditableRow = ({
 				<input
 					type='text'
 					placeholder='Enter a task description...'
-					name='taskDescription'
-					value={editFormData.taskDescription}
+					name='description'
+					value={editFormData.description}
 					onChange={handleEditFormChange}
 					onBlur={handleEditFormSubmit}
 				></input>

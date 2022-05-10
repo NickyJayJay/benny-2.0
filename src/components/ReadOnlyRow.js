@@ -28,7 +28,7 @@ const ReadOnlyRow = ({ task, handleEditClick }) => {
 			</td>
 			<td onClick={(event) => handleEditClick(event, task)}>{task.priority}</td>
 			<td onClick={(event) => handleEditClick(event, task)}>
-				{task.taskDescription || 'Enter a task description'}
+				{task.description || 'Enter a task description'}
 			</td>
 		</tr>
 	);
