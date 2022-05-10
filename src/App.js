@@ -1,9 +1,11 @@
 import React, { useState, Fragment } from 'react';
 import { nanoid } from 'nanoid';
+
 import './App.css';
 import data from './mock-data.json';
 import ReadOnlyRow from './components/ReadOnlyRow';
 import EditableRow from './components/EditableRow';
+import checkBox from './assets/SVG/checkBox.svg';
 
 const App = () => {
 	const [tasks, setTasks] = useState(data);
@@ -118,7 +120,9 @@ const App = () => {
 				<table>
 					<thead>
 						<tr>
-							<th>Status</th>
+							<th>
+								<img src={checkBox} alt='status icon' />
+							</th>
 							<th>ABC</th>
 							<th>
 								Prioritized Task List <button type='submit'>Save</button>

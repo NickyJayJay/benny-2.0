@@ -10,13 +10,12 @@ const EditableRow = ({
 		<tr>
 			<td>
 				<select
-					required='required'
 					name='status'
 					value={editFormData.status}
 					onChange={(event) => handleEditFormChange(event, task.id)}
 					onBlur={handleEditFormSubmit}
 				>
-					<option>Status</option>
+					<option></option>
 					<option value='In Process'>In Process</option>
 					<option value='Completed'>Completed</option>
 					<option value='Forwarded'>Forwarded</option>
@@ -27,7 +26,6 @@ const EditableRow = ({
 			<td>
 				<input
 					type='text'
-					required='required'
 					placeholder='Enter a priority...'
 					name='priority'
 					value={editFormData.priority}
@@ -38,7 +36,6 @@ const EditableRow = ({
 			<td>
 				<input
 					type='text'
-					required='required'
 					placeholder='Enter a task description...'
 					name='taskDescription'
 					value={editFormData.taskDescription}
