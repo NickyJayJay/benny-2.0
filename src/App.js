@@ -47,8 +47,6 @@ const App = () => {
 		newFormData[fieldName] = fieldValue;
 
 		setEditFormData(newFormData);
-
-		console.log(taskId);
 	};
 
 	const handleAddFormSubmit = (event) => {
