@@ -35,6 +35,34 @@ const App = () => {
 		setAddFormData(newFormData);
 	};
 
+	const handleSelectChange = (event, taskId) => {
+		event.preventDefault();
+
+		const fieldValue = event.target.value;
+
+		if (fieldValue === 'Remove') {
+			handleDeleteClick(taskId);
+			return;
+		}
+
+		const editedTask = {
+			id: editTaskId,
+			status: fieldValue,
+			priority: editFormData.priority,
+			description: editFormData.description,
+		};
+
+		const newTasks = [...tasks];
+
+		const index = tasks.findIndex((task) => task.id === editTaskId);
+
+		newTasks[index] = editedTask;
+
+		setTasks(newTasks);
+
+		setEditTaskId(null);
+	};
+
 	const handleEditFormChange = (event, taskId) => {
 		event.preventDefault();
 
@@ -136,6 +164,7 @@ const App = () => {
 								{editTaskId === task.id ? (
 									<EditableRow
 										editFormData={editFormData}
+										handleSelectChange={handleSelectChange}
 										handleEditFormChange={handleEditFormChange}
 										handleCancelClick={handleCancelClick}
 										handleEditFormSubmit={handleEditFormSubmit}

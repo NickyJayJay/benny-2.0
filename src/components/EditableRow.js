@@ -2,6 +2,7 @@ import React from 'react';
 
 const EditableRow = ({
 	editFormData,
+	handleSelectChange,
 	handleEditFormChange,
 	handleEditFormSubmit,
 	task,
@@ -12,8 +13,7 @@ const EditableRow = ({
 				<select
 					name='status'
 					value={editFormData.status}
-					onChange={(event) => handleEditFormChange(event, task.id)}
-					onBlur={handleEditFormSubmit}
+					onChange={(event) => handleSelectChange(event, task.id)}
 				>
 					<option></option>
 					<option value='In Process'>In Process</option>
@@ -29,7 +29,7 @@ const EditableRow = ({
 					placeholder='Enter a priority...'
 					name='priority'
 					value={editFormData.priority}
-					onChange={handleEditFormChange}
+					onChange={(event) => handleEditFormChange(event, task.id)}
 					onBlur={handleEditFormSubmit}
 				></input>
 			</td>
@@ -39,7 +39,7 @@ const EditableRow = ({
 					placeholder='Enter a task description...'
 					name='description'
 					value={editFormData.description}
-					onChange={handleEditFormChange}
+					onChange={(event) => handleEditFormChange(event, task.id)}
 					onBlur={handleEditFormSubmit}
 				></input>
 			</td>
