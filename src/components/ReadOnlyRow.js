@@ -17,11 +17,7 @@ const ReadOnlyRow = ({ task, handleEditClick }) => {
 					<img src={checkmark} alt='completed icon' />
 				)}
 				{task.status === 'Forwarded' && (
-					<img
-						src={arrowRight}
-						alt='forwarded icon'
-						className={'status-cell'}
-					/>
+					<img src={arrowRight} alt='forwarded icon' />
 				)}
 				{task.status === 'Delegated' && <img src={add} alt='delegated icon' />}
 				{task.status === 'Removed' && <img src={X} alt='removed icon' />}
