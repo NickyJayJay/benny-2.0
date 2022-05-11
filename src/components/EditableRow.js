@@ -1,4 +1,5 @@
 import React from 'react';
+import Select from 'react-select';
 
 const EditableRow = ({
 	editFormData,
@@ -6,10 +7,18 @@ const EditableRow = ({
 	handleEditFormSubmit,
 	task,
 }) => {
+	const options = [
+		{ value: 'In Process', label: 'In Process' },
+		{ value: 'Completed', label: 'Completed' },
+		{ value: 'Forwarded', label: 'Forwarded' },
+		{ value: 'Delegated', label: 'Delegated' },
+		{ value: 'Remove', label: 'Remove' },
+	];
+
 	return (
 		<tr>
 			<td>
-				<select
+				{/* <select
 					name='status'
 					value={editFormData.status}
 					onChange={(event) => handleEditFormChange(event, task.id)}
@@ -21,7 +30,11 @@ const EditableRow = ({
 					<option value='Forwarded'>Forwarded</option>
 					<option value='Delegated'>Delegated</option>
 					<option value='Remove'>Remove</option>
-				</select>
+				</select> */}
+				<Select
+					options={options}
+					onChange={(event) => handleEditFormChange(event, task.id)}
+				/>
 			</td>
 			<td>
 				<input

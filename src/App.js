@@ -47,6 +47,7 @@ const App = () => {
 		newFormData[fieldName] = fieldValue;
 
 		setEditFormData(newFormData);
+		console.log(editFormData);
 	};
 
 	const handleAddFormSubmit = (event) => {
@@ -81,7 +82,6 @@ const App = () => {
 		newTasks[index] = editedTask;
 
 		setTasks(newTasks);
-
 		setEditTaskId(null);
 	};
 
