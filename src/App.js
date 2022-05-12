@@ -5,6 +5,12 @@ import './App.css';
 import data from './mock-data.json';
 import ReadOnlyRow from './components/ReadOnlyRow';
 import EditableRow from './components/EditableRow';
+import EditableStatus from './components/Cells/EditableStatus';
+import EditablePriority from './components/Cells/EditablePriority';
+import EditableDescription from './components/Cells/EditableDescription';
+import ReadOnlyStatus from './components/Cells/ReadOnlyStatus';
+import ReadOnlyPriority from './components/Cells/ReadOnlyPriority';
+import ReadOnlyDescription from './components/Cells/ReadOnlyDescription';
 import checkBox from './assets/SVG/checkBox.svg';
 
 const App = () => {
@@ -21,7 +27,10 @@ const App = () => {
 		description: '',
 	});
 
-	const [editTaskId, setEditTaskId] = useState(null);
+	const [editTask, setEditTask] = useState({
+		rowId: null,
+		cellType: null,
+	});
 
 	const handleAddFormChange = (event) => {
 		event.preventDefault();
@@ -41,12 +50,12 @@ const App = () => {
 		const fieldValue = event.target.value;
 
 		if (fieldValue === 'Remove') {
-			handleDeleteClick(taskId);
+			handleDeleteChange(taskId);
 			return;
 		}
 
 		const editedTask = {
-			id: editTaskId,
+			id: editTask.rowId,
 			status: fieldValue,
 			priority: editFormData.priority,
 			description: editFormData.description,
@@ -54,13 +63,16 @@ const App = () => {
 
 		const newTasks = [...tasks];
 
-		const index = tasks.findIndex((task) => task.id === editTaskId);
+		const index = tasks.findIndex((task) => task.id === editTask.rowId);
 
 		newTasks[index] = editedTask;
 
 		setTasks(newTasks);
 
-		setEditTaskId(null);
+		setEditTask({
+			rowId: null,
+			cellType: null,
+		});
 	};
 
 	const handleEditFormChange = (event, taskId) => {
@@ -69,7 +81,7 @@ const App = () => {
 		const fieldName = event.target.getAttribute('name');
 		const fieldValue = event.target.value;
 
-		fieldValue === 'Remove' && handleDeleteClick(taskId);
+		fieldValue === 'Remove' && handleDeleteChange(taskId);
 
 		const newFormData = { ...editFormData };
 		newFormData[fieldName] = fieldValue;
@@ -96,7 +108,7 @@ const App = () => {
 		event.preventDefault();
 
 		const editedTask = {
-			id: editTaskId,
+			id: editTask.rowId,
 			status: editFormData.status,
 			priority: editFormData.priority,
 			description: editFormData.description,
@@ -104,18 +116,24 @@ const App = () => {
 
 		const newTasks = [...tasks];
 
-		const index = tasks.findIndex((task) => task.id === editTaskId);
+		const index = tasks.findIndex((task) => task.id === editTask.rowId);
 
 		newTasks[index] = editedTask;
 
 		setTasks(newTasks);
 
-		setEditTaskId(null);
+		setEditTask({
+			rowId: null,
+			cellType: null,
+		});
 	};
 
 	const handleEditClick = (event, task) => {
 		event.preventDefault();
-		setEditTaskId(task.id);
+		setEditTask({
+			rowId: task.id,
+			cellType: event.target.getAttribute('id'),
+		});
 
 		const formValues = {
 			status: task.status,
@@ -127,10 +145,13 @@ const App = () => {
 	};
 
 	const handleCancelClick = () => {
-		setEditTaskId(null);
+		setEditTask({
+			rowId: null,
+			cellType: null,
+		});
 	};
 
-	const handleDeleteClick = (taskId) => {
+	const handleDeleteChange = (taskId) => {
 		const newTasks = [...tasks];
 
 		const index = tasks.findIndex((task) => task.id === taskId);
@@ -160,25 +181,49 @@ const App = () => {
 					</thead>
 					<tbody>
 						{tasks.map((task) => (
-							<Fragment key={task.id}>
-								{editTaskId === task.id ? (
-									<EditableRow
+							<tr key={task.id}>
+								{editTask.cellType === 'status' &&
+								editTask.rowId === task.id ? (
+									<EditableStatus
 										editFormData={editFormData}
 										handleSelectChange={handleSelectChange}
-										handleEditFormChange={handleEditFormChange}
-										handleCancelClick={handleCancelClick}
-										handleEditFormSubmit={handleEditFormSubmit}
-										handleDeleteClick={handleDeleteClick}
 										task={task}
 									/>
 								) : (
-									<ReadOnlyRow
+									<ReadOnlyStatus
 										task={task}
 										handleEditClick={handleEditClick}
-										handleDeleteClick={handleDeleteClick}
 									/>
 								)}
-							</Fragment>
+								{editTask.cellType === 'priority' &&
+								editTask.rowId === task.id ? (
+									<EditablePriority
+										editFormData={editFormData}
+										handleEditFormChange={handleEditFormChange}
+										handleEditFormSubmit={handleEditFormSubmit}
+										task={task}
+									/>
+								) : (
+									<ReadOnlyPriority
+										task={task}
+										handleEditClick={handleEditClick}
+									/>
+								)}
+								{editTask.cellType === 'description' &&
+								editTask.rowId === task.id ? (
+									<EditableDescription
+										editFormData={editFormData}
+										handleEditFormChange={handleEditFormChange}
+										handleEditFormSubmit={handleEditFormSubmit}
+										task={task}
+									/>
+								) : (
+									<ReadOnlyDescription
+										task={task}
+										handleEditClick={handleEditClick}
+									/>
+								)}
+							</tr>
 						))}
 					</tbody>
 				</table>

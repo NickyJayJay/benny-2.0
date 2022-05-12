@@ -8,8 +8,8 @@ import X from '../assets/SVG/x.svg';
 
 const ReadOnlyRow = ({ task, handleEditClick }) => {
 	return (
-		<tr>
-			<td onClick={(event) => handleEditClick(event, task)}>
+		<>
+			<td id='status' onClick={(event) => handleEditClick(event, task)}>
 				{task.status === 'In Process' && (
 					<img src={dot} alt='in process icon' />
 				)}
@@ -22,11 +22,13 @@ const ReadOnlyRow = ({ task, handleEditClick }) => {
 				{task.status === 'Delegated' && <img src={add} alt='delegated icon' />}
 				{task.status === 'Removed' && <img src={X} alt='removed icon' />}
 			</td>
-			<td onClick={(event) => handleEditClick(event, task)}>{task.priority}</td>
-			<td onClick={(event) => handleEditClick(event, task)}>
-				{task.description || 'Enter a task description'}
+			<td id='priority' onClick={(event) => handleEditClick(event, task)}>
+				{task.priority}
 			</td>
-		</tr>
+			<td id='description' onClick={(event) => handleEditClick(event, task)}>
+				{task.description}
+			</td>
+		</>
 	);
 };
 
