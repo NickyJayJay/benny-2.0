@@ -15,7 +15,10 @@ const EditableRow = ({
 					value={editFormData.status}
 					onChange={(event) => handleSelectChange(event, task.id)}
 				>
-					<option></option>
+					<option hidden>Select Status</option>
+					<option disabled default>
+						Select Status
+					</option>
 					<option value='In Process'>In Process</option>
 					<option value='Completed'>Completed</option>
 					<option value='Forwarded'>Forwarded</option>
