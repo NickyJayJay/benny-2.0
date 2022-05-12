@@ -7,7 +7,7 @@ const EditableDescription = ({
 	handleEditFormSubmit,
 }) => {
 	return (
-		<td>
+		<td id='description'>
 			<input
 				type='text'
 				placeholder='Enter a task description...'

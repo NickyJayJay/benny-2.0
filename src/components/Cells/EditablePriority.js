@@ -7,7 +7,7 @@ const EditablePriority = ({
 	handleEditFormSubmit,
 }) => {
 	return (
-		<td>
+		<td id='priority'>
 			<input
 				type='text'
 				placeholder='Enter a priority...'

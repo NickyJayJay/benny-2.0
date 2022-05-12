@@ -1,10 +1,8 @@
-import React, { useState, Fragment } from 'react';
+import React, { useState } from 'react';
 import { nanoid } from 'nanoid';
 
 import './App.css';
 import data from './mock-data.json';
-import ReadOnlyRow from './components/ReadOnlyRow';
-import EditableRow from './components/EditableRow';
 import EditableStatus from './components/Cells/EditableStatus';
 import EditablePriority from './components/Cells/EditablePriority';
 import EditableDescription from './components/Cells/EditableDescription';

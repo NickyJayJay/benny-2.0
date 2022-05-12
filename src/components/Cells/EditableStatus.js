@@ -1,12 +1,17 @@
 import React from 'react';
 
-const EditableStatus = ({ editFormData, handleSelectChange, task }) => {
+const EditableStatus = ({
+	editFormData,
+	handleSelectChange,
+	task,
+	handleCancelClick,
+}) => {
 	return (
-		<td>
+		<td id='status'>
 			<select
-				id='status'
 				value={editFormData.status}
 				onChange={(event) => handleSelectChange(event, task.id)}
+				onBlur={handleCancelClick}
 			>
 				<option hidden>Select Status</option>
 				<option disabled default>
