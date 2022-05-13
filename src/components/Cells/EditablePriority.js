@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 
 const EditablePriority = ({
 	editFormData,
@@ -6,6 +6,12 @@ const EditablePriority = ({
 	task,
 	handleEditFormSubmit,
 }) => {
+	const inputRef = useRef(null);
+
+	useEffect(() => {
+		inputRef.current.focus();
+	}, []);
+
 	return (
 		<td id='priority'>
 			<input
@@ -15,6 +21,7 @@ const EditablePriority = ({
 				value={editFormData.priority}
 				onChange={(event) => handleEditFormChange(event, task.id)}
 				onBlur={handleEditFormSubmit}
+				ref={inputRef}
 			></input>
 		</td>
 	);

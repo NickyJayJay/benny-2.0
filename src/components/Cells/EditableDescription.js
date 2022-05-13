@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 const EditableDescription = ({
 	editFormData,
@@ -6,6 +6,12 @@ const EditableDescription = ({
 	task,
 	handleEditFormSubmit,
 }) => {
+	const inputRef = useRef(null);
+
+	useEffect(() => {
+		inputRef.current.focus();
+	}, []);
+
 	return (
 		<td id='description'>
 			<input
@@ -15,6 +21,7 @@ const EditableDescription = ({
 				value={editFormData.description}
 				onChange={(event) => handleEditFormChange(event, task.id)}
 				onBlur={handleEditFormSubmit}
+				ref={inputRef}
 			></input>
 		</td>
 	);

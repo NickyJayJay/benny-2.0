@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 
 const EditableStatus = ({
 	editFormData,
@@ -6,11 +6,18 @@ const EditableStatus = ({
 	task,
 	handleCancelClick,
 }) => {
+	const inputRef = useRef(null);
+
+	useEffect(() => {
+		inputRef.current.focus();
+	}, []);
+
 	return (
 		<td id='status'>
 			<select
 				value={editFormData.status}
 				onChange={(event) => handleSelectChange(event, task.id)}
+				ref={inputRef}
 				onBlur={handleCancelClick}
 			>
 				<option hidden>Select Status</option>
