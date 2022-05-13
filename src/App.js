@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { nanoid } from 'nanoid';
 
 import './App.css';
@@ -29,6 +29,10 @@ const App = () => {
 		rowId: null,
 		cellType: null,
 	});
+
+	const statusRef = useRef(null);
+	const priorityRef = useRef(null);
+	const descriptionRef = useRef(null);
 
 	const handleAddFormChange = (event) => {
 		event.preventDefault();
@@ -73,13 +77,11 @@ const App = () => {
 		});
 	};
 
-	const handleEditFormChange = (event, taskId) => {
+	const handleEditFormChange = (event) => {
 		event.preventDefault();
 
 		const fieldName = event.target.getAttribute('name');
 		const fieldValue = event.target.value;
-
-		fieldValue === 'Remove' && handleDeleteChange(taskId);
 
 		const newFormData = { ...editFormData };
 		newFormData[fieldName] = fieldValue;
@@ -100,6 +102,10 @@ const App = () => {
 
 		const newTasks = [...tasks, newTask];
 		setTasks(newTasks);
+
+		statusRef.current.value = 'Select Status';
+		priorityRef.current.value = '';
+		descriptionRef.current.value = '';
 	};
 
 	const handleEditFormSubmit = (event) => {
@@ -120,10 +126,7 @@ const App = () => {
 
 		setTasks(newTasks);
 
-		setEditTask({
-			rowId: null,
-			cellType: null,
-		});
+		handleCancelClick();
 	};
 
 	const handleEditClick = (event, task) => {
@@ -170,10 +173,9 @@ const App = () => {
 							</th>
 							<th>ABC</th>
 							<th>
-								Prioritized Task List <button type='submit'>Save</button>
-								<button type='button' onClick={handleCancelClick}>
-									Cancel
-								</button>
+								Prioritized Daily Task List
+								{/* <button type='submit'>Save</button>
+								<button type='button' onClick={handleCancelClick}>Cancel</button> */}
 							</th>
 						</tr>
 					</thead>
@@ -230,19 +232,23 @@ const App = () => {
 
 			<h2>Add a Task</h2>
 			<form onSubmit={handleAddFormSubmit}>
-				<input
-					type='text'
-					name='status'
-					required='required'
-					placeholder='Enter a task...'
-					onChange={handleAddFormChange}
-				/>
+				<select onChange={handleAddFormChange} name='status' ref={statusRef}>
+					<option hidden>Select Status</option>
+					<option disabled default>
+						Select Status
+					</option>
+					<option value='In Process'>In Process</option>
+					<option value='Completed'>Completed</option>
+					<option value='Forwarded'>Forwarded</option>
+					<option value='Delegated'>Delegated</option>
+				</select>
 				<input
 					type='text'
 					name='priority'
 					required='required'
 					placeholder='Enter a priority'
 					onChange={handleAddFormChange}
+					ref={priorityRef}
 				/>
 				<input
 					type='text'
@@ -250,6 +256,7 @@ const App = () => {
 					required='required'
 					placeholder='Enter a task description...'
 					onChange={handleAddFormChange}
+					ref={descriptionRef}
 				/>
 				<button type='submit'>Add</button>
 			</form>
