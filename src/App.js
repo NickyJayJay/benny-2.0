@@ -185,6 +185,7 @@ const App = () => {
 									<EditableStatus
 										editFormData={editFormData}
 										handleSelectChange={handleSelectChange}
+										handleCancelClick={handleCancelClick}
 										task={task}
 									/>
 								) : (
