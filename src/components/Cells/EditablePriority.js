@@ -1,5 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 
+import classes from '../../App.module.scss';
+
 const EditablePriority = ({
 	editFormData,
 	handleEditFormChange,
@@ -13,13 +15,13 @@ const EditablePriority = ({
 	}, []);
 
 	return (
-		<td id='priority'>
+		<td data-id='priority' className={classes.priority}>
 			<input
 				type='text'
-				placeholder='Enter a priority...'
 				name='priority'
 				value={editFormData.priority}
 				onChange={(event) => handleEditFormChange(event, task.id)}
+				placeholder='ABC'
 				onBlur={handleEditFormSubmit}
 				ref={inputRef}
 			></input>

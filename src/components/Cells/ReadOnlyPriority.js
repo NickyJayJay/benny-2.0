@@ -1,8 +1,14 @@
 import React from 'react';
 
+import classes from '../../App.module.scss';
+
 const ReadOnlyPriority = ({ handleEditClick, task }) => {
 	return (
-		<td id='priority' onClick={(event) => handleEditClick(event, task)}>
+		<td
+			data-id='priority'
+			className={classes.priority}
+			onClick={(event) => handleEditClick(event, task)}
+		>
 			{task.priority}
 		</td>
 	);

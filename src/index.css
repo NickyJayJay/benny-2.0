@@ -13,7 +13,7 @@ html {
   /* 1 */
   -webkit-text-size-adjust: 100%;
   /* 2 */
-  font-size: 16px;
+  font-size: 19px;
 }
 
 /* Sections
@@ -386,15 +386,9 @@ template {
 }
 
 @font-face {
-  font-family: 'IMFellEnglishSC-Regular';
-  src: local('IMFellEnglishSC-Regular'),
-    url(assets/fonts/IMFellEnglishSC-Regular.ttf) format('truetype');
-}
-
-@font-face {
-  font-family: 'Italiana-Regular';
-  src: local('Italiana-Regular'),
-    url(assets/fonts/Italiana-Regular.ttf) format('truetype');
+  font-family: 'Source Serif 4';
+  src: local('Source Serif 4'),
+    url(assets/fonts/SourceSerif4-Medium.ttf) format('truetype');
 }
 
 @font-face {

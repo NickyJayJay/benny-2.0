@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { nanoid } from 'nanoid';
 
-import './App.css';
 import data from './mock-data.json';
 import EditableStatus from './components/Cells/EditableStatus';
 import EditablePriority from './components/Cells/EditablePriority';
@@ -9,7 +8,10 @@ import EditableDescription from './components/Cells/EditableDescription';
 import ReadOnlyStatus from './components/Cells/ReadOnlyStatus';
 import ReadOnlyPriority from './components/Cells/ReadOnlyPriority';
 import ReadOnlyDescription from './components/Cells/ReadOnlyDescription';
+import Card from './components/UI/Card/Card.js';
+import Button from './components/UI/Button/Button';
 import checkBox from './assets/SVG/checkBox.svg';
+import classes from './App.module.scss';
 
 const App = () => {
 	const [tasks, setTasks] = useState(data);
@@ -133,7 +135,7 @@ const App = () => {
 		event.preventDefault();
 		setEditTask({
 			rowId: task.id,
-			cellType: event.target.getAttribute('id'),
+			cellType: event.target.dataset.id,
 		});
 
 		const formValues = {
@@ -163,103 +165,116 @@ const App = () => {
 	};
 
 	return (
-		<div className='app-container'>
-			<form onSubmit={handleEditFormSubmit}>
-				<table>
-					<thead>
-						<tr>
-							<th>
-								<img src={checkBox} alt='status icon' />
-							</th>
-							<th>ABC</th>
-							<th>
-								Prioritized Daily Task List
-								{/* <button type='submit'>Save</button>
+		<div className={classes.appContainer}>
+			<Card className={`${classes.card} card`}>
+				<form onSubmit={handleEditFormSubmit}>
+					<table>
+						<thead>
+							<tr>
+								<th className={classes.statusTitle}>
+									<img src={checkBox} alt='status icon' />
+								</th>
+								<th className={classes.priorityTitle}>ABC</th>
+								<th className={classes.descriptionTitle}>
+									Prioritized Task List
+									{/* <button type='submit'>Save</button>
 								<button type='button' onClick={handleCancelClick}>Cancel</button> */}
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-						{tasks.map((task) => (
-							<tr key={task.id}>
-								{editTask.cellType === 'status' &&
-								editTask.rowId === task.id ? (
-									<EditableStatus
-										editFormData={editFormData}
-										handleSelectChange={handleSelectChange}
-										handleCancelClick={handleCancelClick}
-										task={task}
-									/>
-								) : (
-									<ReadOnlyStatus
-										task={task}
-										handleEditClick={handleEditClick}
-									/>
-								)}
-								{editTask.cellType === 'priority' &&
-								editTask.rowId === task.id ? (
-									<EditablePriority
-										editFormData={editFormData}
-										handleEditFormChange={handleEditFormChange}
-										handleEditFormSubmit={handleEditFormSubmit}
-										task={task}
-									/>
-								) : (
-									<ReadOnlyPriority
-										task={task}
-										handleEditClick={handleEditClick}
-									/>
-								)}
-								{editTask.cellType === 'description' &&
-								editTask.rowId === task.id ? (
-									<EditableDescription
-										editFormData={editFormData}
-										handleEditFormChange={handleEditFormChange}
-										handleEditFormSubmit={handleEditFormSubmit}
-										task={task}
-									/>
-								) : (
-									<ReadOnlyDescription
-										task={task}
-										handleEditClick={handleEditClick}
-									/>
-								)}
+								</th>
 							</tr>
-						))}
-					</tbody>
-				</table>
-			</form>
+						</thead>
+						<tbody>
+							{tasks.map((task) => (
+								<tr key={task.id}>
+									{editTask.cellType === 'status' &&
+									editTask.rowId === task.id ? (
+										<EditableStatus
+											editFormData={editFormData}
+											handleSelectChange={handleSelectChange}
+											handleCancelClick={handleCancelClick}
+											task={task}
+										/>
+									) : (
+										<ReadOnlyStatus
+											task={task}
+											handleEditClick={handleEditClick}
+										/>
+									)}
+									{editTask.cellType === 'priority' &&
+									editTask.rowId === task.id ? (
+										<EditablePriority
+											editFormData={editFormData}
+											handleEditFormChange={handleEditFormChange}
+											handleEditFormSubmit={handleEditFormSubmit}
+											task={task}
+										/>
+									) : (
+										<ReadOnlyPriority
+											task={task}
+											handleEditClick={handleEditClick}
+										/>
+									)}
+									{editTask.cellType === 'description' &&
+									editTask.rowId === task.id ? (
+										<EditableDescription
+											editFormData={editFormData}
+											handleEditFormChange={handleEditFormChange}
+											handleEditFormSubmit={handleEditFormSubmit}
+											task={task}
+										/>
+									) : (
+										<ReadOnlyDescription
+											task={task}
+											handleEditClick={handleEditClick}
+										/>
+									)}
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</form>
 
-			<h2>Add a Task</h2>
-			<form onSubmit={handleAddFormSubmit}>
-				<select onChange={handleAddFormChange} name='status' ref={statusRef}>
-					<option hidden>Select Status</option>
-					<option disabled default>
-						Select Status
-					</option>
-					<option value='In Process'>In Process</option>
-					<option value='Completed'>Completed</option>
-					<option value='Forwarded'>Forwarded</option>
-					<option value='Delegated'>Delegated</option>
-				</select>
-				<input
-					type='text'
-					name='priority'
-					required='required'
-					placeholder='Enter a priority'
-					onChange={handleAddFormChange}
-					ref={priorityRef}
-				/>
-				<input
-					type='text'
-					name='description'
-					required='required'
-					placeholder='Enter a task description...'
-					onChange={handleAddFormChange}
-					ref={descriptionRef}
-				/>
-				<button type='submit'>Add</button>
-			</form>
+				<div className={classes.addTask}>
+					<form onSubmit={handleAddFormSubmit}>
+						<fieldset>
+							<legend>Add a Task</legend>
+							<select
+								onChange={handleAddFormChange}
+								name='status'
+								ref={statusRef}
+								aria-label='Select status'
+							>
+								<option hidden>Select Status</option>
+								<option disabled default>
+									Select Status
+								</option>
+								<option value='In Process'>In Process</option>
+								<option value='Completed'>Completed</option>
+								<option value='Forwarded'>Forwarded</option>
+								<option value='Delegated'>Delegated</option>
+							</select>
+							<input
+								type='text'
+								name='priority'
+								placeholder='ABC'
+								onChange={handleAddFormChange}
+								ref={priorityRef}
+								aria-label='Enter task priority'
+							>
+								{/* <img src={checkBox} alt='status icon' /> */}
+							</input>
+							<input
+								type='text'
+								name='description'
+								placeholder='Enter task description...'
+								onChange={handleAddFormChange}
+								ref={descriptionRef}
+								aria-label='Enter task description'
+							/>
+							<Button type='submit'>Add Task</Button>
+						</fieldset>
+					</form>
+				</div>
+			</Card>
 		</div>
 	);
 };

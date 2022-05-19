@@ -1,5 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 
+import classes from '../../App.module.scss';
+
 const EditableStatus = ({
 	editFormData,
 	handleSelectChange,
@@ -13,15 +15,14 @@ const EditableStatus = ({
 	}, []);
 
 	return (
-		<td id='status'>
+		<td data-id='status' className={classes.status}>
 			<select
 				value={editFormData.status}
 				onChange={(event) => handleSelectChange(event, task.id)}
 				ref={inputRef}
 				onBlur={handleCancelClick}
 			>
-				<option hidden>Select Status</option>
-				<option disabled default>
+				<option disabled default hidden>
 					Select Status
 				</option>
 				<option value='In Process'>In Process</option>

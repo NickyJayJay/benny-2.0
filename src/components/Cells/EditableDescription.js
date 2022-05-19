@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 
+import classes from '../../App.module.scss';
+
 const EditableDescription = ({
 	editFormData,
 	handleEditFormChange,
@@ -13,7 +15,7 @@ const EditableDescription = ({
 	}, []);
 
 	return (
-		<td id='description'>
+		<td data-id='description' className={classes.description}>
 			<input
 				type='text'
 				placeholder='Enter a task description...'

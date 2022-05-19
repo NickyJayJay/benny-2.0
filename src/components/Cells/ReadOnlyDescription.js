@@ -1,8 +1,14 @@
 import React from 'react';
 
+import classes from '../../App.module.scss';
+
 const ReadOnlyDescription = ({ handleEditClick, task }) => {
 	return (
-		<td id='description' onClick={(event) => handleEditClick(event, task)}>
+		<td
+			data-id='description'
+			className={classes.description}
+			onClick={(event) => handleEditClick(event, task)}
+		>
 			{task.description}
 		</td>
 	);

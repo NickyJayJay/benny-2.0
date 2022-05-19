@@ -1,0 +1,328 @@
+@import "./variables.module";
+
+.appContainer {
+  background-color: $primaryColor;
+  background-image: url('assets/images/background-aquamarine.jpg');
+  font-family: $serifFont1;
+  font-size: 1rem;
+  padding: 10px;
+  height: 100vh;
+
+  .card {
+    padding: 50px 10px;
+    background-color: #fff;
+    background-image: url('assets/images/background-white.jpg');
+  }
+
+  table {
+    margin: 0 auto;
+    padding: 5px;
+    border-collapse: collapse;
+    border-spacing: 0;
+    max-width: 768px;
+    table-layout: fixed;
+    width: 100%;
+    border-bottom: 5px solid $accentColor;
+
+    tbody {
+      background-color: #fff;
+
+      tr {
+        cursor: pointer;
+
+        td {
+          padding: 0;
+          position: relative;
+          height: 32px;
+          border: 1px solid $accentColor;
+          box-sizing: content-box;
+        }
+
+        .status {
+          border-left: 2px solid $accentColor;
+          position: relative;
+
+          .statusIcon {
+            display: block;
+            margin: auto;
+          }
+
+          img {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            left: 50%;
+          }
+
+          select {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            height: 26px;
+            width: 27px;
+            border-radius: 0;
+            padding-left: 10px;
+            border: 0;
+
+            &:focus {
+              outline: 0;
+              background-color: $highlightColor;
+            }
+          }
+        }
+
+        .priority {
+          height: 100%;
+          font-family: $serifFont2;
+          font-weight: bold;
+          font-size: 1.05rem;
+          padding: 0;
+          text-align: center;
+          overflow: hidden;
+          cursor: pointer;
+          padding-top: 1px;
+          line-height: 1;
+
+          input {
+            position: absolute;
+            left: 0;
+            top: 0;
+            border: none;
+            height: 100%;
+            width: 100%;
+            text-align: center;
+            padding: 0;
+            font-weight: bold;
+            font-family: $serifFont2;
+            line-height: 1;
+
+            &:focus {
+              outline: 0;
+              background-color: $highlightColor;
+            }
+          }
+        }
+
+        .description {
+          width: calc(100% - 58px);
+          border-right: 2px solid #008002;
+          white-space: nowrap;
+          font-weight: bold;
+          position: relative;
+          font-family: $sansSerifFont;
+          font-size: 1rem;
+          text-indent: 7.5px;
+          overflow: scroll;
+          line-height: 1;
+
+          input {
+            width: 100%;
+            height: 100%;
+            text-indent: 7.5px;
+            border: none;
+            padding: 0;
+            overflow: scroll;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+            line-height: 1;
+
+            &:focus {
+              outline: 0;
+              background-color: $highlightColor;
+            }
+          }
+        }
+      }
+    }
+
+    thead {
+      th {
+        border-bottom: 5px solid $accentColor;
+
+        &:first-child {
+          width: 33px;
+
+          .statusTitle {
+            padding: 0;
+          }
+        }
+
+        &:nth-child(2) {
+          width: 50px;
+        }
+
+        img {
+          width: 1rem;
+          vertical-align: bottom;
+          padding-bottom: 2px;
+        }
+      }
+
+      .priorityTitle {
+        font-size: 1rem;
+      }
+
+      .descriptionTitle {
+        text-align: left;
+        text-indent: 20px;
+        font-size: 1rem;
+        white-space: nowrap;
+      }
+    }
+  }
+
+  .addTask {
+    max-width: 768px;
+    min-width: 280px;
+    margin: 35px auto 0 auto;
+
+    h2 {
+      margin: 1.25rem 0 0.25rem 0;
+      font-family: $sansSerifFont;
+    }
+
+    form {
+
+      fieldset {
+        display: flex;
+        justify-content: flex-start;
+        height: 100%;
+        box-sizing: border-box;
+        padding: 0;
+        align-items: center;
+        width: 100%;
+        margin: 0;
+        border: none;
+
+        legend {
+          display: none;
+        }
+      }
+
+      select {
+        margin-right: 5px;
+        height: 40px;
+        width: fit-content;
+        box-sizing: border-box;
+        font-family: $sansSerifFont;
+        font-weight: bold;
+        border: 1px solid $accentColor;
+        text-align: center;
+
+        &:focus {
+          outline: 0;
+          background-color: $highlightColor;
+          border: 1px solid $accentColor;
+        }
+      }
+
+      input[name=priority] {
+        width: 60px;
+        margin-right: 5px;
+        text-align: center;
+        height: 40px;
+        box-sizing: border-box;
+        font-family: $sansSerifFont;
+        font-weight: bold;
+        line-height: 1;
+        border: 1px solid $accentColor;
+        overflow: scroll;
+        font-family: $serifFont2;
+
+        &:focus {
+          outline: 0;
+          background-color: $highlightColor;
+          border: 1px solid $accentColor;
+        }
+      }
+
+      input[name=description] {
+        width: calc(100% - 387px);
+        margin-right: 5px;
+        white-space: nowrap;
+        font-weight: bold;
+        position: relative;
+        font-family: $sansSerifFont;
+        font-size: 1rem;
+        text-indent: 7.5px;
+        overflow: scroll;
+        padding: 0;
+        height: 40px;
+        box-sizing: border-box;
+        line-height: 1;
+        border: 1px solid $accentColor;
+
+        &:focus {
+          outline: 0;
+          background-color: $highlightColor;
+          border: 1px solid $accentColor;
+        }
+      }
+
+      button {
+        padding: 0;
+        width: 180px;
+        text-transform: uppercase;
+        height: 40px;
+        line-height: 40px;
+        box-sizing: border-box;
+        white-space: nowrap;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .appContainer .card {
+    border-radius: 0;
+    
+    .addTask {
+      margin: 25px auto 0 auto;
+
+      form fieldset {
+        flex-wrap: wrap;
+        padding: 0.7em .75em 1.25em;
+        border: 2px solid $accentColor;
+
+        legend {
+          display: block;
+        }
+
+        select {
+          margin: 5px 5px 5px 0;
+
+          option:disabled {
+            color: gray;
+          }
+        }
+
+        input[name=priority] {
+          margin: 5px 0 5px 5px;
+        }
+
+        input[name=description] {
+          width: 100%;
+          margin: 5px 0 5px 0;
+        }
+
+        button {
+          margin: 5px 0 0 0;
+          width: 100%;
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .appContainer {
+    .card {
+      margin: -10px;
+      height: 100vh;
+    }
+  }
+}
