@@ -10,7 +10,7 @@ import X from '../../assets/SVG/x.svg';
 const ReadOnlyStatus = ({ handleEditClick, task }) => {
 	return (
 		<td
-			data-id='status'
+			data-id='status-cell'
 			className={classes.status}
 			onClick={(event) => handleEditClick(event, task)}
 		>
