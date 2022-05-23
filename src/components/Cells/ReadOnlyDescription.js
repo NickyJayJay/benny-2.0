@@ -5,7 +5,7 @@ import classes from '../../App.module.scss';
 const ReadOnlyDescription = ({ handleEditClick, task }) => {
 	return (
 		<td
-			data-id='description'
+			data-id='description-cell'
 			className={classes.description}
 			onClick={(event) => handleEditClick(event, task)}
 		>

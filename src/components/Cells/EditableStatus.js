@@ -15,7 +15,7 @@ const EditableStatus = ({
 	}, []);
 
 	return (
-		<td data-id='status' className={classes.status}>
+		<td data-id='status-cell' className={classes.status}>
 			<select
 				value={editFormData.status}
 				onChange={(event) => handleSelectChange(event, task.id)}

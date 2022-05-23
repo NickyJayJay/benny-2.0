@@ -15,7 +15,7 @@ const EditableDescription = ({
 	}, []);
 
 	return (
-		<td data-id='description' className={classes.description}>
+		<td data-id='description-cell' className={classes.description}>
 			<input
 				type='text'
 				placeholder='Enter a task description...'
@@ -24,6 +24,7 @@ const EditableDescription = ({
 				onChange={(event) => handleEditFormChange(event, task.id)}
 				onBlur={handleEditFormSubmit}
 				ref={inputRef}
+				maxLength='150'
 			></input>
 		</td>
 	);

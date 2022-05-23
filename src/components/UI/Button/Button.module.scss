@@ -1,7 +1,9 @@
+@import "../../../variables.module";
+
 .button {
     font-family: 'PatrickHand-Regular', 'Arial', sans-serif;
     font-size: 19px;
-    background-color: #008002;
+    background-color: $accentColor;
     border-radius: 5px;
     border: 1px solid #18ab29;
     cursor: pointer;

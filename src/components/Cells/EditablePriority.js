@@ -7,15 +7,16 @@ const EditablePriority = ({
 	handleEditFormChange,
 	task,
 	handleEditFormSubmit,
+	isError,
 }) => {
 	const inputRef = useRef(null);
 
 	useEffect(() => {
 		inputRef.current.focus();
-	}, []);
+	}, [isError]);
 
 	return (
-		<td data-id='priority' className={classes.priority}>
+		<td data-id='priority-cell' className={classes.priority}>
 			<input
 				type='text'
 				name='priority'
@@ -24,6 +25,7 @@ const EditablePriority = ({
 				placeholder='ABC'
 				onBlur={handleEditFormSubmit}
 				ref={inputRef}
+				maxLength='3'
 			></input>
 		</td>
 	);

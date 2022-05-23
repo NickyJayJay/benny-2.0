@@ -3,20 +3,19 @@ import ReactDOM from 'react-dom';
 
 import classes from './Modal.module.scss';
 import Card from '../Card/Card';
-import UpdateTaskStatus from '../../Table/Row/Cells/Status/UpdateTaskStatus';
-import UpdateTaskPriority from '../../Table/Row/Cells/Priority/UpdateTaskPriority';
+import UpdateTaskPriority from '../../Cells/Error/UpdateTaskPriority';
 import Close from '../../../assets/SVG/close.svg';
 
 const Modal = ({
+	editFormData,
+	addFormData,
 	onHide,
-	onStatus,
 	onPriority,
 	onLetter,
 	onNumber,
-	letterPriority,
-	numberPriority,
-	onMode,
-	modalMode,
+	editMode,
+	handleEditFormSubmit,
+	handleAddFormSubmit,
 }) => {
 	return (
 		<>
@@ -32,22 +31,24 @@ const Modal = ({
 						alt='close icon'
 						onClick={onHide}
 					/>
-					{modalMode === 'status-cell' && (
-						<UpdateTaskStatus
-							onHide={onHide}
-							onStatus={onStatus}
-							onMode={onMode}
-						/>
-					)}
-					{modalMode === 'priority-cell' && (
+					{(editMode === 'priority-cell' || editMode === 'priority-input') && (
 						<UpdateTaskPriority
-							onHide={onHide}
 							onPriority={onPriority}
 							onLetter={onLetter}
 							onNumber={onNumber}
-							onMode={onMode}
-							letterPriority={letterPriority}
-							numberPriority={numberPriority}
+							editMode={editMode}
+							letterPriority={
+								editMode === 'priority-cell'
+									? editFormData.letterPriority
+									: addFormData.letterPriority
+							}
+							numberPriority={
+								editMode === 'priority-cell'
+									? editFormData.numberPriority
+									: addFormData.numberPriority
+							}
+							handleEditFormSubmit={handleEditFormSubmit}
+							handleAddFormSubmit={handleAddFormSubmit}
 						/>
 					)}
 				</Card>,
