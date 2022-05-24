@@ -7,6 +7,7 @@ const EditablePriority = ({
 	handleEditFormChange,
 	task,
 	handleEditFormSubmit,
+	handleEditFormSubmitKeydown,
 	isError,
 }) => {
 	const inputRef = useRef(null);
@@ -24,6 +25,7 @@ const EditablePriority = ({
 				onChange={(event) => handleEditFormChange(event, task.id)}
 				placeholder='ABC'
 				onBlur={handleEditFormSubmit}
+				onKeyDown={handleEditFormSubmitKeydown}
 				ref={inputRef}
 				maxLength='3'
 			></input>

@@ -41,6 +41,8 @@ const App = () => {
 
 	const [editMode, setEditMode] = useState(null);
 
+	const priorityInput = useRef(null);
+
 	const handleAddFormChange = (event) => {
 		event.preventDefault();
 
@@ -60,6 +62,9 @@ const App = () => {
 
 	const handleSelectChange = (event, taskId) => {
 		event.preventDefault();
+		const form = event.target.form;
+		const i = Array.from(form.elements).indexOf(event.target);
+		form.elements[i + 1].focus();
 
 		const fieldValue = event.target.value;
 
@@ -76,17 +81,10 @@ const App = () => {
 		};
 
 		const newTasks = [...tasks];
-
 		const index = tasks.findIndex((task) => task.id === editTask.rowId);
-
 		newTasks[index] = editedTask;
-
 		setTasks(newTasks);
-
-		setEditTask({
-			rowId: null,
-			cellType: null,
-		});
+		handleCancelClick();
 	};
 
 	const handlePriorityValidation = (fieldValue, fieldName, newFormData) => {
@@ -140,6 +138,15 @@ const App = () => {
 		});
 	};
 
+	const handleAddFormKeydown = (event) => {
+		if (event.keyCode === 13) {
+			const form = event.target.form;
+			const i = Array.from(form.elements).indexOf(event.target);
+			form.elements[i + 1].focus();
+			event.preventDefault();
+		}
+	};
+
 	const handleEditFormSubmit = (event) => {
 		event.preventDefault();
 
@@ -151,15 +158,34 @@ const App = () => {
 		};
 
 		const newTasks = [...tasks];
-
 		const index = tasks.findIndex((task) => task.id === editTask.rowId);
-
 		newTasks[index] = editedTask;
-
 		setTasks(newTasks);
 	};
 
+	const handleEditFormSubmitKeydown = (event) => {
+		if (event.keyCode === 13) {
+			const form = event.target.form;
+			const i = Array.from(form.elements).indexOf(event.target);
+			form.elements[i + 1].focus();
+			event.preventDefault();
+			const editedTask = {
+				id: editTask.rowId,
+				status: editFormData.status,
+				priority: editFormData.priority,
+				description: editFormData.description,
+			};
+
+			const newTasks = [...tasks];
+			const index = tasks.findIndex((task) => task.id === editTask.rowId);
+			newTasks[index] = editedTask;
+			setTasks(newTasks);
+		}
+	};
+
 	const handleEditClick = (event, task) => {
+		if (event.key === 'Tab') return;
+
 		event.preventDefault();
 		setEditMode(event.target.dataset.id);
 		setEditTask({
@@ -244,35 +270,43 @@ const App = () => {
 		setIsError(false);
 	};
 
-	const setEditModeHandler = (event) => {
-		setEditMode(event.target.dataset.id);
-		setIsError(true);
-	};
+	const hideModalHandler = (event) => {
+		if (event.key === 'Tab') return;
 
-	const hideModalHandler = () => {
-		setEditFormData((prevState) => {
-			return { ...prevState, letterPriority: '', numberPriority: '' };
-		});
+		if (editMode === 'priority-cell') {
+			const newFormData = {
+				...editFormData,
+				letterPriority: '',
+				numberPriority: '',
+			};
+			setEditFormData(newFormData);
+		} else {
+			const newFormData = {
+				...addFormData,
+				letterPriority: '',
+				numberPriority: '',
+			};
+			setAddFormData(newFormData);
+		}
 		setIsError(false);
 	};
 
 	return (
 		<div className={classes.appContainer}>
-			{isError && (
-				<Modal
-					editFormData={editFormData}
-					addFormData={addFormData}
-					editTask={editTask}
-					onHide={hideModalHandler}
-					onPriority={updatePriorityHandler}
-					onLetter={letterPriorityHandler}
-					onNumber={numberPriorityHandler}
-					onMode={setEditModeHandler}
-					editMode={editMode}
-					handleEditFormSubmit={handleEditFormSubmit}
-					handleAddFormSubmit={handleAddFormSubmit}
-				/>
-			)}
+			{isError &&
+				(editMode === 'priority-cell' || editMode === 'priority-input') && (
+					<Modal
+						editFormData={editFormData}
+						addFormData={addFormData}
+						onHide={hideModalHandler}
+						onPriority={updatePriorityHandler}
+						onLetter={letterPriorityHandler}
+						onNumber={numberPriorityHandler}
+						editMode={editMode}
+						handleEditFormSubmit={handleEditFormSubmit}
+						priorityInput={priorityInput}
+					/>
+				)}
 			<Card className={`${classes.card} card`}>
 				<form onSubmit={handleEditFormSubmit}>
 					<table>
@@ -302,6 +336,7 @@ const App = () => {
 										<ReadOnlyStatus
 											task={task}
 											handleEditClick={handleEditClick}
+											setEditMode={setEditMode}
 										/>
 									)}
 									{editTask.cellType === 'priority-cell' &&
@@ -310,6 +345,7 @@ const App = () => {
 											editFormData={editFormData}
 											handleEditFormChange={handleEditFormChange}
 											handleEditFormSubmit={handleEditFormSubmit}
+											handleEditFormSubmitKeydown={handleEditFormSubmitKeydown}
 											task={task}
 											isError={isError}
 										/>
@@ -317,6 +353,7 @@ const App = () => {
 										<ReadOnlyPriority
 											task={task}
 											handleEditClick={handleEditClick}
+											setEditMode={setEditMode}
 										/>
 									)}
 									{editTask.cellType === 'description-cell' &&
@@ -325,12 +362,14 @@ const App = () => {
 											editFormData={editFormData}
 											handleEditFormChange={handleEditFormChange}
 											handleEditFormSubmit={handleEditFormSubmit}
+											handleEditFormSubmitKeydown={handleEditFormSubmitKeydown}
 											task={task}
 										/>
 									) : (
 										<ReadOnlyDescription
 											task={task}
 											handleEditClick={handleEditClick}
+											setEditMode={setEditMode}
 										/>
 									)}
 								</tr>
@@ -345,7 +384,8 @@ const App = () => {
 							<legend>Add a Task</legend>
 							<select
 								onChange={handleAddFormChange}
-								onClick={(event) => setEditMode(event.target.dataset.id)}
+								onFocus={(event) => setEditMode(event.target.dataset.id)}
+								onKeyDown={(event) => handleAddFormKeydown(event)}
 								name='status'
 								value={addFormData.status}
 								data-id='status-input'
@@ -367,8 +407,10 @@ const App = () => {
 								placeholder='ABC'
 								value={addFormData.priority}
 								onChange={(event) => handleAddFormChange(event)}
-								onClick={(event) => setEditMode(event.target.dataset.id)}
+								onFocus={(event) => setEditMode(event.target.dataset.id)}
+								onKeyDown={(event) => handleAddFormKeydown(event)}
 								aria-label='Enter task priority'
+								ref={priorityInput}
 							></input>
 							<input
 								type='text'
@@ -377,7 +419,8 @@ const App = () => {
 								placeholder='Enter task description...'
 								value={addFormData.description}
 								onChange={handleAddFormChange}
-								onClick={(event) => setEditMode(event.target.dataset.id)}
+								onFocus={(event) => setEditMode(event.target.dataset.id)}
+								onKeyDown={(event) => handleAddFormKeydown(event)}
 								aria-label='Enter task description'
 								maxLength='150'
 							/>

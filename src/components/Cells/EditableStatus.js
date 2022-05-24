@@ -22,7 +22,8 @@ const EditableStatus = ({
 				ref={inputRef}
 				onBlur={handleCancelClick}
 			>
-				<option disabled default hidden>
+				<option hidden>Select Status</option>
+				<option disabled default>
 					Select Status
 				</option>
 				<option value='In Process'>In Process</option>
