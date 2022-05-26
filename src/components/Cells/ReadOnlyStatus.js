@@ -7,15 +7,14 @@ import arrowRight from '../../assets/SVG/arrow-right.svg';
 import dot from '../../assets/SVG/dot.svg';
 import X from '../../assets/SVG/x.svg';
 
-const ReadOnlyStatus = ({ handleEditClick, task, setEditMode }) => {
+const ReadOnlyStatus = ({ handleEditClick, task, setEditTask }) => {
 	return (
 		<td
 			data-id='status-cell'
 			className={classes.status}
 			onClick={(event) => handleEditClick(event, task)}
 			onKeyDown={(event) => handleEditClick(event, task)}
-			onKeyPress={(event) => handleEditClick(event, task)}
-			onFocus={(event) => setEditMode(event.target.dataset.id)}
+			onFocus={(event) => handleEditClick(event, task)}
 		>
 			{task.status === 'In Process' && (
 				<button data-id='status-cell'>

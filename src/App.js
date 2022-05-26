@@ -34,12 +34,10 @@ const App = () => {
 
 	const [editTask, setEditTask] = useState({
 		rowId: null,
-		cellType: null,
+		inputType: null,
 	});
 
 	const [isError, setIsError] = useState(false);
-
-	const [editMode, setEditMode] = useState(null);
 
 	const priorityInput = useRef(null);
 
@@ -187,10 +185,9 @@ const App = () => {
 		if (event.key === 'Tab') return;
 
 		event.preventDefault();
-		setEditMode(event.target.dataset.id);
 		setEditTask({
-			rowId: task.id,
-			cellType: event.target.dataset.id,
+			rowId: task.id || null,
+			inputType: event.target.dataset.id,
 		});
 
 		const formValues = {
@@ -207,7 +204,7 @@ const App = () => {
 	const handleCancelClick = () => {
 		setEditTask({
 			rowId: null,
-			cellType: null,
+			inputType: null,
 		});
 	};
 
@@ -220,7 +217,7 @@ const App = () => {
 	};
 
 	const letterPriorityHandler = (event) => {
-		if (editMode === 'priority-cell') {
+		if (editTask.inputType === 'priority-cell') {
 			const newFormData = { ...editFormData };
 			newFormData.letterPriority = event.target.value;
 			setEditFormData(newFormData);
@@ -232,7 +229,7 @@ const App = () => {
 	};
 
 	const numberPriorityHandler = (event) => {
-		if (editMode === 'priority-cell') {
+		if (editTask.inputType === 'priority-cell') {
 			const newFormData = { ...editFormData };
 			newFormData.numberPriority = Math.abs(
 				parseInt(event.target.value.slice(0, 2))
@@ -250,7 +247,7 @@ const App = () => {
 	const updatePriorityHandler = (event) => {
 		event.preventDefault();
 
-		if (editMode === 'priority-cell') {
+		if (editTask.inputType === 'priority-cell') {
 			const newFormData = {
 				...editFormData,
 				priority: editFormData.letterPriority + editFormData.numberPriority,
@@ -273,7 +270,7 @@ const App = () => {
 	const hideModalHandler = (event) => {
 		if (event.key === 'Tab') return;
 
-		if (editMode === 'priority-cell') {
+		if (editTask.inputType === 'priority-cell') {
 			const newFormData = {
 				...editFormData,
 				letterPriority: '',
@@ -294,7 +291,8 @@ const App = () => {
 	return (
 		<div className={classes.appContainer}>
 			{isError &&
-				(editMode === 'priority-cell' || editMode === 'priority-input') && (
+				(editTask.inputType === 'priority-cell' ||
+					editTask.inputType === 'priority-input') && (
 					<Modal
 						editFormData={editFormData}
 						addFormData={addFormData}
@@ -302,7 +300,7 @@ const App = () => {
 						onPriority={updatePriorityHandler}
 						onLetter={letterPriorityHandler}
 						onNumber={numberPriorityHandler}
-						editMode={editMode}
+						editMode={editTask.inputType}
 						handleEditFormSubmit={handleEditFormSubmit}
 						priorityInput={priorityInput}
 					/>
@@ -324,7 +322,7 @@ const App = () => {
 						<tbody>
 							{tasks.map((task) => (
 								<tr key={task.id}>
-									{editTask.cellType === 'status-cell' &&
+									{editTask.inputType === 'status-cell' &&
 									editTask.rowId === task.id ? (
 										<EditableStatus
 											editFormData={editFormData}
@@ -336,10 +334,10 @@ const App = () => {
 										<ReadOnlyStatus
 											task={task}
 											handleEditClick={handleEditClick}
-											setEditMode={setEditMode}
+											setEditTask={setEditTask}
 										/>
 									)}
-									{editTask.cellType === 'priority-cell' &&
+									{editTask.inputType === 'priority-cell' &&
 									editTask.rowId === task.id ? (
 										<EditablePriority
 											editFormData={editFormData}
@@ -353,10 +351,10 @@ const App = () => {
 										<ReadOnlyPriority
 											task={task}
 											handleEditClick={handleEditClick}
-											setEditMode={setEditMode}
+											setEditTask={setEditTask}
 										/>
 									)}
-									{editTask.cellType === 'description-cell' &&
+									{editTask.inputType === 'description-cell' &&
 									editTask.rowId === task.id ? (
 										<EditableDescription
 											editFormData={editFormData}
@@ -369,7 +367,7 @@ const App = () => {
 										<ReadOnlyDescription
 											task={task}
 											handleEditClick={handleEditClick}
-											setEditMode={setEditMode}
+											setEditTask={setEditTask}
 										/>
 									)}
 								</tr>
@@ -384,7 +382,12 @@ const App = () => {
 							<legend>Add a Task</legend>
 							<select
 								onChange={handleAddFormChange}
-								onFocus={(event) => setEditMode(event.target.dataset.id)}
+								onFocus={(event) =>
+									setEditTask({
+										rowId: null,
+										inputType: event.target.dataset.id,
+									})
+								}
 								onKeyDown={(event) => handleAddFormKeydown(event)}
 								name='status'
 								value={addFormData.status}
@@ -407,7 +410,12 @@ const App = () => {
 								placeholder='ABC'
 								value={addFormData.priority}
 								onChange={(event) => handleAddFormChange(event)}
-								onFocus={(event) => setEditMode(event.target.dataset.id)}
+								onFocus={(event) =>
+									setEditTask({
+										rowId: null,
+										inputType: event.target.dataset.id,
+									})
+								}
 								onKeyDown={(event) => handleAddFormKeydown(event)}
 								aria-label='Enter task priority'
 								ref={priorityInput}
@@ -419,7 +427,12 @@ const App = () => {
 								placeholder='Enter task description...'
 								value={addFormData.description}
 								onChange={handleAddFormChange}
-								onFocus={(event) => setEditMode(event.target.dataset.id)}
+								onFocus={(event) =>
+									setEditTask({
+										rowId: null,
+										inputType: event.target.dataset.id,
+									})
+								}
 								onKeyDown={(event) => handleAddFormKeydown(event)}
 								aria-label='Enter task description'
 								maxLength='150'
