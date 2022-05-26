@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 
 import Button from '../../UI/Button/Button';
 import classes from './UpdateTaskPriority.module.scss';
@@ -13,6 +13,12 @@ const UpdateTaskPriority = ({
 	handleAddFormChange,
 	editMode,
 }) => {
+	const radioRef = useRef(null);
+
+	useEffect(() => {
+		radioRef.current.focus();
+	}, []);
+
 	return (
 		<form
 			className={classes.UpdateTaskPriority}
@@ -32,6 +38,7 @@ const UpdateTaskPriority = ({
 						name='letter'
 						value='A'
 						onInput={onLetter}
+						ref={radioRef}
 					/>
 					<label>
 						A <span>(Important and time sensitive)</span>

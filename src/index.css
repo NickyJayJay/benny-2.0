@@ -396,3 +396,12 @@ template {
   src: local('PatrickHand-Regular'),
     url(assets/fonts/PatrickHand-Regular.ttf) format('truetype');
 }
+
+*:focus {
+  outline: 3px solid #008002;
+}
+
+*:hover,
+*:active {
+  outline: none;
+}
