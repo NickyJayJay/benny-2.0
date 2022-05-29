@@ -7,7 +7,7 @@ const EditableDescription = ({
 	handleEditFormChange,
 	task,
 	handleEditFormSubmit,
-	handleEditFormSubmitKeydown,
+	handleEditFormKeydown,
 }) => {
 	const inputRef = useRef(null);
 
@@ -24,7 +24,7 @@ const EditableDescription = ({
 				value={editFormData.description}
 				onChange={(event) => handleEditFormChange(event, task.id)}
 				onBlur={handleEditFormSubmit}
-				onKeyDown={(event) => handleEditFormSubmitKeydown(event)}
+				onKeyDown={(event) => handleEditFormKeydown(event)}
 				ref={inputRef}
 				maxLength='150'
 			></input>
