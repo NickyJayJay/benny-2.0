@@ -161,23 +161,25 @@ const App = () => {
 		setTasks(newTasks);
 	};
 
-	const handleEditFormSubmitKeydown = (event) => {
+	const handleEditFormKeydown = (event) => {
 		if (event.keyCode === 13) {
+			event.preventDefault();
 			const form = event.target.form;
 			const i = Array.from(form.elements).indexOf(event.target);
 			form.elements[i + 1].focus();
-			event.preventDefault();
-			const editedTask = {
-				id: editTask.rowId,
-				status: editFormData.status,
-				priority: editFormData.priority,
-				description: editFormData.description,
-			};
 
-			const newTasks = [...tasks];
-			const index = tasks.findIndex((task) => task.id === editTask.rowId);
-			newTasks[index] = editedTask;
-			setTasks(newTasks);
+			const fieldName = event.target.getAttribute('name');
+			const fieldValue =
+				fieldName === 'priority'
+					? event.target.value.toUpperCase()
+					: event.target.value;
+
+			const newFormData = { ...editFormData };
+			newFormData[fieldName] = fieldValue;
+
+			handlePriorityValidation(fieldValue, fieldName, newFormData);
+
+			setEditFormData(newFormData);
 		}
 	};
 
@@ -343,7 +345,7 @@ const App = () => {
 											editFormData={editFormData}
 											handleEditFormChange={handleEditFormChange}
 											handleEditFormSubmit={handleEditFormSubmit}
-											handleEditFormSubmitKeydown={handleEditFormSubmitKeydown}
+											handleEditFormKeydown={handleEditFormKeydown}
 											task={task}
 											isError={isError}
 										/>
@@ -360,7 +362,7 @@ const App = () => {
 											editFormData={editFormData}
 											handleEditFormChange={handleEditFormChange}
 											handleEditFormSubmit={handleEditFormSubmit}
-											handleEditFormSubmitKeydown={handleEditFormSubmitKeydown}
+											handleEditFormKeydown={handleEditFormKeydown}
 											task={task}
 										/>
 									) : (
