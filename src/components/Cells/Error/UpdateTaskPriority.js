@@ -27,6 +27,7 @@ const UpdateTaskPriority = ({
 					? handleEditFormSubmit
 					: handleAddFormChange
 			}
+			onClick={(e) => e.stopPropagation()}
 		>
 			<h2>Update Task Priority</h2>
 			<fieldset>

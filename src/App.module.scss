@@ -12,196 +12,204 @@
     background-color: #fff;
     background-image: url('assets/images/background-white.jpg');
   }
-
-  table {
-    margin: 0 auto;
-    padding: 5px;
-    border-collapse: collapse;
-    border-spacing: 0;
+  
+  form {
     max-width: 768px;
-    table-layout: fixed;
-    width: 100%;
-    border-bottom: 5px solid $accentColor;
+    margin: 0 auto;
 
-    tbody {
-      background-color: rgba(255, 255, 255, .75);
-
-      tr {
-        cursor: pointer;
-
-        td {
-          padding: 0;
-          position: relative;
-          height: 32px;
-          border: 1px solid $accentColor;
-          box-sizing: content-box;
-          
-          button {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            height: 100%;
-            width: 100%;
-            border: none;
-            background: none;
-            border-radius: 0;
-            -webkit-border-radius: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            color: #000;
-            padding: 0;
-            text-indent: 6px;
-            z-index: 1;
-
-             &:focus {
-              background-color: $highlightColor;
-            }
-          }
-        }
-
-        .status {
-          border-left: 2px solid $accentColor;
-          position: relative;
-
-          .statusIcon {
-            display: block;
-            margin: auto;
-          }
-
-          img {
-            position: absolute;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            left: 50%;
-          }
-
-          select {
-            position: absolute;
-            top: 0;
-            left: 0;
-            z-index: 1;
-            height: 100%;
-            width: 100%;
-            border-radius: 0;
-            padding-left: 15px;
-            border: 0;
-
-            &:focus {
-              background-color: $highlightColor;
-            }
-          }
-        }
-
-        .priority {
-          height: 100%;
-          font-family: $serifFont2;
-          font-weight: bold;
-          font-size: 1.05rem;
-          padding: 0;
-          text-align: center;
-          cursor: pointer;
-          padding-top: 1px;
-          line-height: 1;
-
-          button {
-            margin-top: .5px;
-            font-weight: bold;
-            text-indent: 0;
-          }
-
-          input {
-            position: absolute;
-            left: 0;
-            top: 0;
-            border: none;
-            height: 100%;
-            width: 100%;
-            text-align: center;
-            padding: 0;
-            font-weight: bold;
-            font-family: $serifFont2;
-            line-height: 1;
-
-            &:focus {
-              background-color: $highlightColor;
-            }
-          }
-        }
-
-        .description {
-          width: calc(100% - 58px);
-          border-right: 2px solid $accentColor;
-          white-space: nowrap;
-          font-weight: bold;
-          position: relative;
-          font-family: $sansSerifFont;
-          font-size: 1rem;
-          text-indent: 7.5px;
-          line-height: 1;
-
-          button {
-              text-align: left;
-              line-height: 1;
-            }
-
-          input {
-            width: 100%;
-            height: 100%;
-            text-indent: 6px;
-            border: none;
-            padding: 0;
-            overflow: scroll;
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            line-height: 1;
-
-            &:focus {
-              background-color: $highlightColor;
-            }
-          }
-        }
-      }
-    }
-
-    thead {
-      th {
+    table {
+        padding: 5px;
+        border-collapse: collapse;
+        border-spacing: 0;
+        table-layout: fixed;
+        width: 100%;
         border-bottom: 5px solid $accentColor;
+    
+        tbody {
+          background-color: rgba(255, 255, 255, .75);
+          position: relative;
+    
+          tr {
+            cursor: pointer;
+    
+            td {
+              padding: 0;
+              position: relative;
+              height: 32px;
+              border: 1px solid $accentColor;
+              box-sizing: content-box;
+    
+              button {
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                height: 100%;
+                width: 100%;
+                border: none;
+                background: none;
+                border-radius: 0;
+                -webkit-border-radius: none;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+                color: #000;
+                padding: 0;
+                text-indent: 6px;
+                z-index: 1;
+    
+                &:focus-visible {
+                  background-color: $highlightColor;
+                  outline: 3px solid $accentColor;
+                }
+              }
 
-        &:first-child {
-          width: 33px;
+              &.active {
+                background-color: $highlightColor;
+                outline: 1px solid $accentColor;
 
-          .statusTitle {
-            padding: 0;
+                input {
+                  background-color: $highlightColor;
+                  outline: 1px solid $accentColor;
+                }
+              }
+            }
+    
+            .status {
+              border-left: 2px solid $accentColor;
+              position: relative;
+
+              &.active {
+                  background-color: $highlightColor;
+                  outline: 3px solid $accentColor;
+              }
+
+              .statusIcon {
+                display: block;
+                margin: auto;
+              }
+    
+              img {
+                position: absolute;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                left: 50%;
+              }
+            }
+    
+            .priority {
+              height: 100%;
+              font-family: $serifFont2;
+              font-weight: bold;
+              font-size: 1.05rem;
+              padding: 0;
+              text-align: center;
+              cursor: pointer;
+              padding-top: 1px;
+              line-height: 1;
+    
+              button {
+                margin-top: .5px;
+                font-weight: bold;
+                text-indent: 0;
+              }
+    
+              input {
+                position: absolute;
+                left: 0;
+                top: 0;
+                border: none;
+                height: 100%;
+                width: 100%;
+                text-align: center;
+                padding: 0;
+                font-weight: bold;
+                font-family: $serifFont2;
+                line-height: 1;
+    
+                 &:focus-visible {
+                  background-color: $highlightColor;
+                  outline: 3px solid $accentColor;
+                }
+              }
+            }
+    
+            .description {
+              width: calc(100% - 58px);
+              border-right: 2px solid $accentColor;
+              white-space: nowrap;
+              font-weight: bold;
+              position: relative;
+              font-family: $sansSerifFont;
+              font-size: 1rem;
+              text-indent: 7.5px;
+              line-height: 1;
+    
+              button {
+                text-align: left;
+                line-height: 1;
+              }
+    
+              input {
+                width: 100%;
+                height: 100%;
+                text-indent: 6px;
+                border: none;
+                padding: 0;
+                overflow: scroll;
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+                line-height: 1;
+    
+                &:focus-visible {
+                  background-color: $highlightColor;
+                  outline: 3px solid $accentColor;
+                }
+              }
+            }
           }
         }
-
-        &:nth-child(2) {
-          width: 50px;
+    
+        thead {
+          th {
+            border-bottom: 5px solid $accentColor;
+    
+            &:first-child {
+              width: 33px;
+    
+              .statusTitle {
+                padding: 0;
+              }
+            }
+    
+            &:nth-child(2) {
+              width: 50px;
+            }
+    
+            img {
+              width: 1rem;
+              vertical-align: bottom;
+              padding-bottom: 2px;
+            }
+          }
+    
+          .priorityTitle {
+            font-size: 1rem;
+          }
+    
+          .descriptionTitle {
+            text-align: left;
+            text-indent: 10px;
+            font-size: 1rem;
+            white-space: nowrap;
+          }
         }
-
-        img {
-          width: 1rem;
-          vertical-align: bottom;
-          padding-bottom: 2px;
-        }
       }
-
-      .priorityTitle {
-        font-size: 1rem;
-      }
-
-      .descriptionTitle {
-        text-align: left;
-        text-indent: 10px;
-        font-size: 1rem;
-        white-space: nowrap;
-      }
-    }
   }
+
+  
 
   .addTask {
     max-width: 768px;
@@ -237,8 +245,8 @@
         border: 1px solid $accentColor;
         text-align: center;
 
-        &:focus {
-          background-color: $highlightColor;
+        &:focus-visible {
+          outline: 3px solid $accentColor;
         }
       }
 
@@ -255,8 +263,9 @@
         overflow: scroll;
         font-family: $serifFont2;
 
-        &:focus {
+         &:focus-visible {
           background-color: $highlightColor;
+          outline: 3px solid $accentColor;
         }
       }
 
@@ -276,19 +285,15 @@
         line-height: 1;
         border: 1px solid $accentColor;
 
-        &:focus {
+        &:focus-visible {
           background-color: $highlightColor;
+          outline: 3px solid $accentColor;
         }
       }
 
       button {
-        padding: 0;
         width: 180px;
         text-transform: uppercase;
-        height: 40px;
-        line-height: 40px;
-        box-sizing: border-box;
-        white-space: nowrap;
       }
     }
   }

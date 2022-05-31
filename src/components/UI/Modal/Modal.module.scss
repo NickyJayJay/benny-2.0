@@ -1,3 +1,5 @@
+@import "../../../variables.module";
+
 .backdrop {
   position: fixed;
   top: 0;
@@ -29,6 +31,10 @@
     cursor: pointer;
     border: none;
     background: none;
+
+      &:focus-visible {
+      outline: 3px solid $accentColor;
+    }
   }
 }
 

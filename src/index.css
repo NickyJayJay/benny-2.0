@@ -397,11 +397,20 @@ template {
     url(assets/fonts/PatrickHand-Regular.ttf) format('truetype');
 }
 
-*:focus {
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+*:focus-visible {
   outline: 3px solid #008002;
 }
 
 *:hover,
 *:active {
   outline: none;
+}
+
+body.lockScroll {
+  height: 100vh;
+  overflow-y: hidden;
 }

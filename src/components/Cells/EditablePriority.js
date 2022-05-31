@@ -9,15 +9,23 @@ const EditablePriority = ({
 	handleEditFormSubmit,
 	handleEditFormKeydown,
 	isError,
+	editTask,
 }) => {
 	const inputRef = useRef(null);
 
 	useEffect(() => {
-		inputRef.current.focus();
-	}, [isError]);
+		!isError && inputRef.current.focus();
+	});
 
 	return (
-		<td data-id='priority-cell' className={classes.priority}>
+		<td
+			data-id='priority-cell'
+			className={
+				task.id === editTask.rowId && editTask.inputType === 'priority-cell'
+					? `${classes.priority} ${classes.active}`
+					: classes.priority
+			}
+		>
 			<input
 				type='text'
 				name='priority'
@@ -27,7 +35,6 @@ const EditablePriority = ({
 				onBlur={handleEditFormSubmit}
 				onKeyDown={(event) => handleEditFormKeydown(event)}
 				ref={inputRef}
-				maxLength='3'
 			></input>
 		</td>
 	);
