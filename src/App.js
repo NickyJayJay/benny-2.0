@@ -1,16 +1,17 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { nanoid } from 'nanoid';
 
 import data from './mock-data.json';
-import EditableStatus from './components/Cells/EditableStatus';
+import useOutsideClick from './hooks/useOutsideClick';
 import EditablePriority from './components/Cells/EditablePriority';
 import EditableDescription from './components/Cells/EditableDescription';
 import ReadOnlyStatus from './components/Cells/ReadOnlyStatus';
 import ReadOnlyPriority from './components/Cells/ReadOnlyPriority';
 import ReadOnlyDescription from './components/Cells/ReadOnlyDescription';
 import Card from './components/UI/Card/Card.js';
-import Button from './components/UI/Button/Button';
+import ButtonGradient from './components/UI/Button/ButtonGradient';
 import Modal from './components/UI/Modal/Modal';
+import ContextMenu from './components/UI/ContextMenu/ContextMenu';
 import checkBox from './assets/SVG/checkBox.svg';
 import classes from './App.module.scss';
 
@@ -35,20 +36,130 @@ const App = () => {
 	const [editTask, setEditTask] = useState({
 		rowId: null,
 		inputType: null,
+		xPos: '0px',
+		yPos: '0px',
+		xPosTouch: '0px',
+		yPosTouch: '0px',
+		showMenu: false,
 	});
 
 	const [isError, setIsError] = useState(false);
 
 	const priorityInput = useRef(null);
 
-	const handleAddFormChange = (event) => {
-		event.preventDefault();
+	if (editTask.showMenu || isError) {
+		document.body.classList.add('lockScroll');
+		document.body.style.top = `-${window.scrollY}px`;
+	}
+	if (!editTask.showMenu && !isError) {
+		document.body.classList.remove('lockScroll');
+		document.body.style.top = '';
+	}
 
-		const fieldName = event.target.getAttribute('name');
+	useEffect(() => {
+		const close = (e) => {
+			if (e.key === 'Escape') {
+				isError && hideModalHandler(e);
+				editTask.showMenu && setEditTask({ ...editTask, showMenu: false });
+			}
+		};
+		window.addEventListener('keydown', close);
+		return () => window.removeEventListener('keydown', close);
+	});
+
+	const setX = useCallback((e) => {
+		if (e.pageX) {
+			return `${e.pageX}px`;
+		} else if (e.touches && e.touches[0].pageX) {
+			return `${e.touches[0].pageX}px`;
+		} else if (e.type === 'keydown' && e.target.getBoundingClientRect()) {
+			return `${e.target.getBoundingClientRect().x + 35}px`;
+		} else {
+			return null;
+		}
+	}, []);
+
+	const setY = useCallback((e) => {
+		const containerBottom =
+			outsideClickRef.current.getBoundingClientRect().bottom;
+		const menuBottom =
+			e.pageY + 224 - window.scrollY ||
+			(e.touches && e.touches[0].pageY + 224 - window.scrollY) ||
+			e.target.getBoundingClientRect().y + 224 ||
+			null;
+
+		if (e.pageY && menuBottom <= containerBottom) {
+			return `${e.pageY}px`;
+		} else if (e.pageY && menuBottom > containerBottom) {
+			return `${e.pageY - (menuBottom - containerBottom)}px`;
+		} else if (
+			!e.pageY &&
+			e.touches &&
+			e.touches[0].pageY &&
+			menuBottom <= containerBottom
+		) {
+			return `${e.touches[0].pageY}px`;
+		} else if (
+			!e.pageY &&
+			e.touches &&
+			e.touches[0].pageY &&
+			menuBottom > containerBottom
+		) {
+			return `${e.touches[0].pageY - (menuBottom - containerBottom)}px`;
+		} else if (
+			e.type === 'keydown' &&
+			e.target.getBoundingClientRect() &&
+			menuBottom <= containerBottom
+		) {
+			return `${e.target.getBoundingClientRect().y + 35}px`;
+		} else if (
+			e.type === 'keydown' &&
+			e.target.getBoundingClientRect() &&
+			menuBottom > containerBottom
+		) {
+			return `${
+				e.target.getBoundingClientRect().y - (menuBottom - containerBottom)
+			}px`;
+		} else {
+			return null;
+		}
+	}, []);
+
+	const handleOutsideClick = useCallback(
+		(e) => {
+			setEditTask({
+				rowId: null,
+				inputType: e.target.dataset.id || null,
+				xPos: setX(e),
+				yPos: setY(e),
+				xPosTouch: setX(e),
+				yPosTouch: setY(e),
+				showMenu:
+					((editTask.xPos && editTask.yPos) ||
+						(editTask.xPosTouch && editTask.yPosTouch)) &&
+					e.target.dataset.id === 'status-cell'
+						? true
+						: false,
+			});
+		},
+		[
+			editTask.xPos,
+			editTask.xPosTouch,
+			editTask.yPos,
+			editTask.yPosTouch,
+			setX,
+			setY,
+		]
+	);
+
+	const outsideClickRef = useOutsideClick((e) => handleOutsideClick(e));
+
+	const handleAddFormChange = (e) => {
+		e.preventDefault();
+
+		const fieldName = e.target.getAttribute('name');
 		const fieldValue =
-			fieldName === 'priority'
-				? event.target.value.toUpperCase()
-				: event.target.value;
+			fieldName === 'priority' ? e.target.value.toUpperCase() : e.target.value;
 
 		const newFormData = { ...addFormData };
 		newFormData[fieldName] = fieldValue;
@@ -58,52 +169,66 @@ const App = () => {
 		setAddFormData(newFormData);
 	};
 
-	const handleSelectChange = (event, taskId) => {
-		event.preventDefault();
-		const form = event.target.form;
-		const i = Array.from(form.elements).indexOf(event.target);
-		form.elements[i + 1].focus();
+	const handleMenuItemClick = (e) => {
+		e.stopPropagation();
+		if (e.key === 'Tab') return;
+		let menuValue;
 
-		const fieldValue = event.target.value;
-
-		if (fieldValue === 'Remove') {
-			handleDeleteChange(taskId);
-			return;
+		if (e.type === 'click' && e.target.tagName === 'SPAN') {
+			menuValue = e.target.textContent;
+		} else if (e.type === 'click' && e.target.tagName === 'IMG') {
+			menuValue = e.target.previousElementSibling.textContent;
+		} else {
+			menuValue = e.target.childNodes[0].textContent;
 		}
 
 		const editedTask = {
 			id: editTask.rowId,
-			status: fieldValue,
+			status: menuValue,
 			priority: editFormData.priority,
 			description: editFormData.description,
 		};
+
+		if (menuValue === 'Remove') {
+			handleDeleteChange(editTask.rowId);
+			setEditTask({ ...editTask, showMenu: false });
+			return;
+		}
+
+		if (menuValue === 'Cancel') {
+			setEditTask({ ...editTask, showMenu: false });
+			return;
+		}
 
 		const newTasks = [...tasks];
 		const index = tasks.findIndex((task) => task.id === editTask.rowId);
 		newTasks[index] = editedTask;
 		setTasks(newTasks);
-		handleCancelClick();
+
+		setEditTask({ ...editTask, showMenu: false });
+		return;
 	};
 
 	const handlePriorityValidation = (fieldValue, fieldName, newFormData) => {
 		if (fieldName !== 'priority') return;
 
-		if (/^([ABC]?|[ABC][1-9]?|[ABC][1-9][0-9])?$/i.test(fieldValue)) {
+		if (
+			/^([ABC]?|[ABC][1-9]?|[ABC][1-9][0-9])?$/i.test(fieldValue) &&
+			fieldValue.length <= 3
+		) {
 			setIsError(false);
 		} else {
-			newFormData[fieldName] = '';
+			newFormData[fieldName] = editFormData.priority;
 			setIsError(true);
 		}
 	};
 
-	const handleEditFormChange = (event) => {
-		event.preventDefault();
+	const handleEditFormChange = (e) => {
+		e.preventDefault();
 
-		const fieldName = event.target.getAttribute('name');
+		const fieldName = e.target.getAttribute('name');
 		const fieldValue =
-			fieldName === 'priority'
-				? event.target.value.toUpperCase()
-				: event.target.value;
+			fieldName === 'priority' ? e.target.value.toUpperCase() : e.target.value;
 
 		const newFormData = { ...editFormData };
 		newFormData[fieldName] = fieldValue;
@@ -113,8 +238,8 @@ const App = () => {
 		setEditFormData(newFormData);
 	};
 
-	const handleAddFormSubmit = (event) => {
-		event.preventDefault();
+	const handleAddFormSubmit = (e) => {
+		e.preventDefault();
 
 		const newTask = {
 			id: nanoid(),
@@ -136,17 +261,17 @@ const App = () => {
 		});
 	};
 
-	const handleAddFormKeydown = (event) => {
-		if (event.keyCode === 13) {
-			const form = event.target.form;
-			const i = Array.from(form.elements).indexOf(event.target);
+	const handleAddFormKeydown = (e) => {
+		if (e.key === 'Enter') {
+			const form = e.target.form;
+			const i = Array.from(form.elements).indexOf(e.target);
 			form.elements[i + 1].focus();
-			event.preventDefault();
+			e.preventDefault();
 		}
 	};
 
-	const handleEditFormSubmit = (event) => {
-		event.preventDefault();
+	const handleEditFormSubmit = (e) => {
+		e.preventDefault();
 
 		const editedTask = {
 			id: editTask.rowId,
@@ -161,35 +286,68 @@ const App = () => {
 		setTasks(newTasks);
 	};
 
-	const handleEditFormKeydown = (event) => {
-		if (event.keyCode === 13) {
-			event.preventDefault();
-			const form = event.target.form;
-			const i = Array.from(form.elements).indexOf(event.target);
-			form.elements[i + 1].focus();
+	const handleEditFormKeydown = (e) => {
+		const form = e.target.form;
+		const i = Array.from(form.elements).indexOf(e.target);
 
-			const fieldName = event.target.getAttribute('name');
-			const fieldValue =
-				fieldName === 'priority'
-					? event.target.value.toUpperCase()
-					: event.target.value;
-
-			const newFormData = { ...editFormData };
-			newFormData[fieldName] = fieldValue;
-
-			handlePriorityValidation(fieldValue, fieldName, newFormData);
-
-			setEditFormData(newFormData);
+		if (!form.elements[i + 1] || !form.elements[i - 1]) {
+			return;
 		}
+
+		if (e.key === 'Enter' || (e.key === 'Tab' && !e.shiftKey)) {
+			e.preventDefault();
+
+			form.elements[i].getAttribute('name') === 'priority' &&
+				form.elements[i + 1].click();
+			form.elements[i].getAttribute('name') === 'description' &&
+				form.elements[i + 1].click();
+		} else if (e.key === 'Tab' && e.shiftKey) {
+			e.preventDefault();
+
+			form.elements[i].getAttribute('name') === 'priority' &&
+				form.elements[i - 1].click();
+			form.elements[i].getAttribute('name') === 'description' &&
+				form.elements[i - 1].click();
+		}
+
+		const fieldName = e.target.getAttribute('name');
+		const fieldValue =
+			fieldName === 'priority' ? e.target.value.toUpperCase() : e.target.value;
+
+		const newFormData = { ...editFormData };
+		newFormData[fieldName] = fieldValue;
+
+		handlePriorityValidation(fieldValue, fieldName, newFormData);
+		setEditFormData(newFormData);
 	};
 
-	const handleEditClick = (event, task) => {
-		if (event.key === 'Tab') return;
-
-		event.preventDefault();
+	const handleEditClick = (e, task) => {
+		if (
+			(e.key === 'Tab' || e.key === 'Escape' || e.shiftKey) &&
+			e.target.dataset.id === 'status-cell'
+		)
+			return;
+		e.stopPropagation();
+		e.target.dataset.id === 'status-cell' && e.preventDefault();
+		e.target.dataset.id === 'status-cell' && e.target.tagName === 'IMG'
+			? e.target.parentNode.focus()
+			: e.target.focus();
 		setEditTask({
 			rowId: task.id || null,
-			inputType: event.target.dataset.id,
+			inputType: e.target.dataset.id,
+			xPos: setX(e),
+			yPos: setY(e),
+			xPosTouch: setX(e),
+			yPosTouch: setY(e),
+			showMenu:
+				e.pageX !== 0 &&
+				e.pageX !== 'undefined' &&
+				e.pageY !== 0 &&
+				e.pageY !== 'undefined' &&
+				e.target.dataset.id === 'status-cell' &&
+				e.key !== 'Tab'
+					? true
+					: false,
 		});
 
 		const formValues = {
@@ -203,13 +361,6 @@ const App = () => {
 		setEditFormData(formValues);
 	};
 
-	const handleCancelClick = () => {
-		setEditTask({
-			rowId: null,
-			inputType: null,
-		});
-	};
-
 	const handleDeleteChange = (taskId) => {
 		const newTasks = [...tasks];
 		const index = tasks.findIndex((task) => task.id === taskId);
@@ -218,36 +369,36 @@ const App = () => {
 		setTasks(newTasks);
 	};
 
-	const letterPriorityHandler = (event) => {
+	const letterPriorityHandler = (e) => {
 		if (editTask.inputType === 'priority-cell') {
 			const newFormData = { ...editFormData };
-			newFormData.letterPriority = event.target.value;
+			newFormData.letterPriority = e.target.value;
 			setEditFormData(newFormData);
 		} else {
 			const newFormData = { ...addFormData };
-			newFormData.letterPriority = event.target.value;
+			newFormData.letterPriority = e.target.value;
 			setAddFormData(newFormData);
 		}
 	};
 
-	const numberPriorityHandler = (event) => {
+	const numberPriorityHandler = (e) => {
 		if (editTask.inputType === 'priority-cell') {
 			const newFormData = { ...editFormData };
 			newFormData.numberPriority = Math.abs(
-				parseInt(event.target.value.slice(0, 2))
+				parseInt(e.target.value.slice(0, 2))
 			);
 			setEditFormData(newFormData);
 		} else {
 			const newFormData = { ...addFormData };
 			newFormData.numberPriority = Math.abs(
-				parseInt(event.target.value.slice(0, 2))
+				parseInt(e.target.value.slice(0, 2))
 			);
 			setAddFormData(newFormData);
 		}
 	};
 
-	const updatePriorityHandler = (event) => {
-		event.preventDefault();
+	const updatePriorityHandler = (e) => {
+		e.preventDefault();
 
 		if (editTask.inputType === 'priority-cell') {
 			const newFormData = {
@@ -269,8 +420,9 @@ const App = () => {
 		setIsError(false);
 	};
 
-	const hideModalHandler = (event) => {
-		if (event.key === 'Tab') return;
+	const hideModalHandler = (e) => {
+		e.stopPropagation();
+		if (e.key === 'Tab') return;
 
 		if (editTask.inputType === 'priority-cell') {
 			const newFormData = {
@@ -309,6 +461,13 @@ const App = () => {
 				)}
 			<Card className={`${classes.card} card`}>
 				<form onSubmit={handleEditFormSubmit}>
+					{editTask.showMenu && (
+						<ContextMenu
+							xPos={editTask.xPos}
+							yPos={editTask.yPos}
+							handleMenuItemClick={handleMenuItemClick}
+						/>
+					)}
 					<table>
 						<thead>
 							<tr>
@@ -321,24 +480,14 @@ const App = () => {
 								</th>
 							</tr>
 						</thead>
-						<tbody>
+						<tbody ref={outsideClickRef}>
 							{tasks.map((task) => (
 								<tr key={task.id}>
-									{editTask.inputType === 'status-cell' &&
-									editTask.rowId === task.id ? (
-										<EditableStatus
-											editFormData={editFormData}
-											handleSelectChange={handleSelectChange}
-											handleCancelClick={handleCancelClick}
-											task={task}
-										/>
-									) : (
-										<ReadOnlyStatus
-											task={task}
-											handleEditClick={handleEditClick}
-											setEditTask={setEditTask}
-										/>
-									)}
+									<ReadOnlyStatus
+										task={task}
+										handleEditClick={handleEditClick}
+										editTask={editTask}
+									/>
 									{editTask.inputType === 'priority-cell' &&
 									editTask.rowId === task.id ? (
 										<EditablePriority
@@ -348,12 +497,12 @@ const App = () => {
 											handleEditFormKeydown={handleEditFormKeydown}
 											task={task}
 											isError={isError}
+											editTask={editTask}
 										/>
 									) : (
 										<ReadOnlyPriority
 											task={task}
 											handleEditClick={handleEditClick}
-											setEditTask={setEditTask}
 										/>
 									)}
 									{editTask.inputType === 'description-cell' &&
@@ -364,12 +513,12 @@ const App = () => {
 											handleEditFormSubmit={handleEditFormSubmit}
 											handleEditFormKeydown={handleEditFormKeydown}
 											task={task}
+											editTask={editTask}
 										/>
 									) : (
 										<ReadOnlyDescription
 											task={task}
 											handleEditClick={handleEditClick}
-											setEditTask={setEditTask}
 										/>
 									)}
 								</tr>
@@ -384,13 +533,8 @@ const App = () => {
 							<legend>Add a Task</legend>
 							<select
 								onChange={handleAddFormChange}
-								onFocus={(event) =>
-									setEditTask({
-										rowId: null,
-										inputType: event.target.dataset.id,
-									})
-								}
-								onKeyDown={(event) => handleAddFormKeydown(event)}
+								onClick={(e) => handleOutsideClick(e)}
+								onKeyDown={(e) => handleAddFormKeydown(e)}
 								name='status'
 								value={addFormData.status}
 								data-id='status-input'
@@ -411,14 +555,9 @@ const App = () => {
 								data-id='priority-input'
 								placeholder='ABC'
 								value={addFormData.priority}
-								onChange={(event) => handleAddFormChange(event)}
-								onFocus={(event) =>
-									setEditTask({
-										rowId: null,
-										inputType: event.target.dataset.id,
-									})
-								}
-								onKeyDown={(event) => handleAddFormKeydown(event)}
+								onChange={(e) => handleAddFormChange(e)}
+								onClick={(e) => handleOutsideClick(e)}
+								onKeyDown={(e) => handleAddFormKeydown(e)}
 								aria-label='Enter task priority'
 								ref={priorityInput}
 							></input>
@@ -429,17 +568,14 @@ const App = () => {
 								placeholder='Enter task description...'
 								value={addFormData.description}
 								onChange={handleAddFormChange}
-								onFocus={(event) =>
-									setEditTask({
-										rowId: null,
-										inputType: event.target.dataset.id,
-									})
-								}
-								onKeyDown={(event) => handleAddFormKeydown(event)}
+								onClick={(e) => handleOutsideClick(e)}
+								onKeyDown={(e) => handleAddFormKeydown(e)}
 								aria-label='Enter task description'
 								maxLength='150'
 							/>
-							<Button type='submit'>Add Task</Button>
+							<ButtonGradient type='submit'>
+								<span>Add Task</span>
+							</ButtonGradient>
 						</fieldset>
 					</form>
 				</div>

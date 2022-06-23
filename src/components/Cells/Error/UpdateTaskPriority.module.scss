@@ -42,6 +42,11 @@
         border: 1px solid #7d7d7d;
         transition: 0.2s all linear;
         background: #fff;
+
+       &:focus-visible {
+          background-color: $highlightColor;
+          outline: 3px solid $accentColor;
+        }
         
         &:checked {
           border: 8px solid $accentColor;
@@ -70,6 +75,12 @@
     }
     input[type=number] {
       font-size: 24px;
+      width: 60px;
+
+      &:focus-visible {
+        background-color: $highlightColor;
+        outline: 3px solid $accentColor;
+      }
     }
   }
 
@@ -84,6 +95,10 @@
     display: block;
     width: 50%;
     font-size: 21px;
+
+    &:focus-visible {
+      outline: 3px solid $accentColor;
+    }
   }
 }
 
