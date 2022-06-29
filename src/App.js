@@ -1,7 +1,10 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { nanoid } from 'nanoid';
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+import { getDatabase, ref, remove, update } from 'firebase/database';
 
-import data from './mock-data.json';
+import { firebaseConfig } from './firebaseConfig';
 import useOutsideClick from './hooks/useOutsideClick';
 import EditablePriority from './components/Cells/EditablePriority';
 import EditableDescription from './components/Cells/EditableDescription';
@@ -16,7 +19,10 @@ import checkBox from './assets/SVG/checkBox.svg';
 import classes from './App.module.scss';
 
 const App = () => {
-	const [tasks, setTasks] = useState(data);
+	const [tasks, setTasks] = useState([]);
+	const [isLoading, setIsLoading] = useState(true);
+	const [httpError, setHttpError] = useState();
+
 	const [addFormData, setAddFormData] = useState({
 		status: '',
 		letterPriority: '',
@@ -47,6 +53,12 @@ const App = () => {
 
 	const priorityInput = useRef(null);
 
+	// Initialize Firebase and set bindings
+	const app = initializeApp(firebaseConfig);
+	const db = getDatabase(app);
+	const auth = getAuth();
+	const url = app.options.databaseURL;
+
 	if (editTask.showMenu || isError) {
 		document.body.classList.add('lockScroll');
 		document.body.style.top = `-${window.scrollY}px`;
@@ -66,6 +78,36 @@ const App = () => {
 		window.addEventListener('keydown', close);
 		return () => window.removeEventListener('keydown', close);
 	});
+
+	useEffect(() => {
+		const fetchTasks = async () => {
+			const response = await fetch(`${url}/tasks.json`);
+
+			if (!response.ok) {
+				throw new Error('Something went wrong!');
+			}
+
+			const responseData = await response.json();
+
+			const loadedTasks = [];
+
+			for (const key in responseData) {
+				loadedTasks.push({
+					id: key,
+					status: responseData[key].status,
+					priority: responseData[key].priority,
+					description: responseData[key].description,
+				});
+			}
+			setTasks(loadedTasks);
+			setIsLoading(false);
+		};
+
+		fetchTasks().catch((error) => {
+			setIsLoading(false);
+			setHttpError(error.message);
+		});
+	}, []);
 
 	const setX = useCallback((e) => {
 		if (e.pageX) {
@@ -259,6 +301,15 @@ const App = () => {
 			priority: '',
 			description: '',
 		});
+
+		fetch(`${url}/tasks.json`, {
+			method: 'POST',
+			body: JSON.stringify({
+				status: addFormData.status,
+				priority: addFormData.priority,
+				description: addFormData.description,
+			}),
+		});
 	};
 
 	const handleAddFormKeydown = (e) => {
@@ -284,30 +335,44 @@ const App = () => {
 		const index = tasks.findIndex((task) => task.id === editTask.rowId);
 		newTasks[index] = editedTask;
 		setTasks(newTasks);
+		const dbRef = ref(db, `tasks/${editTask.rowId}`);
+		update(dbRef, editedTask);
 	};
 
 	const handleEditFormKeydown = (e) => {
 		const form = e.target.form;
+		const focusableElements = document.querySelectorAll(
+			'a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), [tabindex="0"]'
+		);
 		const i = Array.from(form.elements).indexOf(e.target);
+		const j = Array.from(focusableElements).indexOf(e.target);
+		const curFocusableEl = form.elements[i];
+		const nextFocusableEl = form.elements[i + 1] || focusableElements[j + 1];
+		const prevFocusableEl = form.elements[i - 1] || focusableElements[j - 1];
 
-		if (!form.elements[i + 1] || !form.elements[i - 1]) {
-			return;
+		if (!nextFocusableEl || !prevFocusableEl) return;
+
+		if (
+			e.key === 'Enter' ||
+			(e.key === 'Tab' &&
+				!e.shiftKey &&
+				(curFocusableEl.getAttribute('name') === 'priority' ||
+					curFocusableEl.getAttribute('name') === 'description'))
+		) {
+			e.preventDefault();
+			nextFocusableEl.click();
+			nextFocusableEl.focus();
 		}
 
-		if (e.key === 'Enter' || (e.key === 'Tab' && !e.shiftKey)) {
+		if (
+			e.key === 'Tab' &&
+			e.shiftKey &&
+			(curFocusableEl.getAttribute('name') === 'priority' ||
+				curFocusableEl.getAttribute('name') === 'description')
+		) {
 			e.preventDefault();
-
-			form.elements[i].getAttribute('name') === 'priority' &&
-				form.elements[i + 1].click();
-			form.elements[i].getAttribute('name') === 'description' &&
-				form.elements[i + 1].click();
-		} else if (e.key === 'Tab' && e.shiftKey) {
-			e.preventDefault();
-
-			form.elements[i].getAttribute('name') === 'priority' &&
-				form.elements[i - 1].click();
-			form.elements[i].getAttribute('name') === 'description' &&
-				form.elements[i - 1].click();
+			prevFocusableEl.click();
+			prevFocusableEl.focus();
 		}
 
 		const fieldName = e.target.getAttribute('name');
@@ -367,6 +432,8 @@ const App = () => {
 
 		newTasks.splice(index, 1);
 		setTasks(newTasks);
+		const dbRef = ref(db, `tasks/${taskId}`);
+		remove(dbRef);
 	};
 
 	const letterPriorityHandler = (e) => {
@@ -441,6 +508,22 @@ const App = () => {
 		}
 		setIsError(false);
 	};
+
+	if (httpError) {
+		return (
+			<section className={classes.tasksError}>
+				<p>{httpError}</p>
+			</section>
+		);
+	}
+
+	if (isLoading) {
+		return (
+			<section className={classes.tasksLoading}>
+				<p>Loading...</p>
+			</section>
+		);
+	}
 
 	return (
 		<div className={classes.appContainer}>
