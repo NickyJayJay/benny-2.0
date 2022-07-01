@@ -14,7 +14,7 @@ const EditableDescription = ({
 
 	useEffect(() => {
 		inputRef.current.focus();
-	});
+	}, []);
 
 	return (
 		<td

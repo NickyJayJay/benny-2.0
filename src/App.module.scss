@@ -299,6 +299,21 @@
   }
 }
 
+.tasksLoading, .tasksError {
+  text-align: center;
+  font-size: 36px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  color: $accentColor;
+}
+
+.tasksError {
+  color: red;
+}
+
 @media screen and (max-width: 767px) {
   .appContainer .card {
     border-radius: 0;
@@ -314,7 +329,7 @@
           margin: 5px 5px 5px 0;
 
           option:disabled {
-            color: gray;
+            color: #808080;
           }
         }
 
