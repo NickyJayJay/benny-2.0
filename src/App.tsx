@@ -19,7 +19,7 @@ import checkBox from './assets/SVG/checkBox.svg';
 import classes from './App.module.scss';
 
 const App = () => {
-	const [tasks, setTasks] = useState([]);
+	const [tasks, setTasks] = useState<LoadedTask[]>([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [httpError, setHttpError] = useState();
 
@@ -52,6 +52,15 @@ const App = () => {
 	const [isError, setIsError] = useState(false);
 
 	const priorityInput = useRef(null);
+
+	type LoadedTask = {
+				id: string,
+				status: string,
+				priority: string,
+				description: string
+			};
+
+	const loadedTasks: LoadedTask[] = [];
 
 	// Initialize Firebase and set bindings
 	const app = initializeApp(firebaseConfig);
@@ -89,8 +98,6 @@ const App = () => {
 
 			const responseData = await response.json();
 
-			const loadedTasks = [];
-
 			for (const key in responseData) {
 				loadedTasks.push({
 					id: key,
@@ -107,7 +114,7 @@ const App = () => {
 			setIsLoading(false);
 			setHttpError(error.message);
 		});
-	}, []);
+	}, [loadedTasks, url]);
 
 	const setX = useCallback((e) => {
 		if (e.pageX) {
@@ -123,7 +130,7 @@ const App = () => {
 
 	const setY = useCallback((e) => {
 		const containerBottom =
-			outsideClickRef.current.getBoundingClientRect().bottom;
+			outsideClickRef.current?.getBoundingClientRect().bottom;
 		const menuBottom =
 			e.pageY + 224 - window.scrollY ||
 			(e.touches && e.touches[0].pageY + 224 - window.scrollY) ||
@@ -194,7 +201,7 @@ const App = () => {
 		]
 	);
 
-	const outsideClickRef = useOutsideClick((e) => handleOutsideClick(e));
+	const outsideClickRef = useOutsideClick((e: MouseEvent) => handleOutsideClick(e));
 
 	const handleAddFormChange = (e) => {
 		e.preventDefault();
